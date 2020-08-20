@@ -1,0 +1,431 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>notes.md</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2 id="unix-processes">Unix Processes</h2>
+<ul>
+<li>A Unix process executes in this environment</li>
+</ul>
+<p><strong>Filter</strong> = a program that transforms a data stream</p>
+<h4 id="unix-filter-commands">Unix Filter Commands:</h4>
+<ul>
+<li>read text from their standard input or specified files</li>
+<li>perform useful transformations on the text stream</li>
+<li>write the transformed text to their standard output</li>
+</ul>
+<pre><code>cat MyProg.c
+# reads text of the program in the file MyProg.c
+# writes the (untransformed) text to standard output (i.e. the screen) 
+
+cat &lt;MyProg.c
+# shell (command interpreter) connects the file MyProg.c to standard input of cat
+# cat reads its standard input 
+# writes the (untransformed) text to standard output ( i.e. the screen) 
+</code></pre>
+<h4 id="filters">Filters</h4>
+<ul>
+<li>Shell I/O: used to specify filter source and destination</li>
+<li>Alternate: filters allows multiple sources to be specified</li>
+<li>pipeline to combine filters</li>
+<li>similar style of problem solve to function composition</li>
+</ul>
+<p>Unix filters conventions for command line arguments:</p>
+<ul>
+<li>input can be specified  by a list of file names</li>
+<li>no files are mentioned, reads from standard input</li>
+<li>filename “-” corresponds to standard input</li>
+</ul>
+<pre><code># read from the file data1 
+filter data1 
+# or 
+filter &lt; data1 
+
+# read from the files data1 data2 data3 
+filter data1 data2 data3 
+
+# read from data1, then stdin, then data2 
+filter data1 - data2
+</code></pre>
+<p>Filters normally perform multiple variations on a task.  Selection of the variation via command-line options:</p>
+<ul>
+<li>options are introduced by a - (“minus” or “dash”)</li>
+<li>options have a “short” form, - followed by a single letter (e.g. <code>-v</code>)</li>
+<li>options have a “long” form, – followed by a word (e.g. <code>–verbose</code>)</li>
+<li>short form options can usually be combined (e.g. <code>-av</code> vs <code>-a -v</code>)</li>
+<li>help (or <code>-?</code>) often gives a list of all command-line options</li>
+</ul>
+<h4 id="filters-option">Filters: Option</h4>
+<p>Find what filters are available: <code>man -k keyword</code> The solution to all your problems: <strong>RTFM</strong></p>
+<h4 id="delimited-input">Delimited Input</h4>
+<ul>
+<li>works w/ text data formatted as fields (like columns)</li>
+<li>option for specifying the delimiter/ field separator</li>
+<li>make assumptions about the default column separator</li>
+<li>e.g. : or | etc.</li>
+</ul>
+<h4 id="egrep-globally-search-w-regular-expression-and-print"><code>egrep</code>: Globally search w/ Regular Expression and Print</h4>
+<ul>
+<li><code>grep</code>
+<ul>
+<li>uses a limited form of POSIX regular expressions (no + ? | or parentheses)</li>
+</ul>
+</li>
+<li><code>egrep/grep -E (extended grep)</code>
+<ul>
+<li>implements full regex syntax</li>
+</ul>
+</li>
+<li><code>fgrep or grep -F</code>
+<ul>
+<li>finds any of several (maybe even thousands of) fixed strings using an optimised algorithm.</li>
+</ul>
+</li>
+<li><code>grep -P</code>
+<ul>
+<li>Perl-like extended regular expressions</li>
+</ul>
+</li>
+</ul>
+<h4 id="paste"><code>paste</code></h4>
+<p>The paste command displays several text files “in parallel” on output. If the inputs are files a, b, c</p>
+<ul>
+<li>the first line of output is composed of the first lines of a, b, c</li>
+<li>the second line of output is composed of the second lines of a, b, c</li>
+</ul>
+<p>Lines from each file are separated by a tab character or specified delimiter(s).<br>
+If files are different lengths, output has all lines from longest file, with empty strings for missing lines.<br>
+Interleaves lines instead with -s (serial) option.</p>
+<h4 id="sort-sort-lines"><code>sort</code>: sort lines</h4>
+<p>Copies input to output- rearranging particular order of lines<br>
+By default, sorting based on first characters in the line;<br>
+Other features:</p>
+<ul>
+<li>understands that text data sometimes occurs in delimited fields. (so, can also sort fields (columns) other than the first (which is the default))</li>
+<li>can distinguish numbers and sort appropriately</li>
+<li>can ignore punctuation or case differences</li>
+<li>can sort files “in place” as well as behaving like a filter</li>
+<li>capable of sorting very large files</li>
+</ul>
+<h4 id="sed-stream-editor"><code>sed</code>: stream editor</h4>
+<p>The sed command provides the power of interactive-style editing in “filter-mode”.<br>
+Invocation:<br>
+<code>sed -e ’EditCommands’ DataFile</code><br>
+<code>sed -f EditCommandFile DataFile</code><br>
+How sed works:</p>
+<ul>
+<li>read each line of input</li>
+<li>check if it matches any patterns or line-ranges</li>
+<li>apply related editing commands to the line</li>
+<li>write the transformed line to output</li>
+</ul>
+<p>The editing commands are very powerful and subsume the actions of many of the filters looked at so far. In addition, sed can:</p>
+<ul>
+<li>partition lines based on patterns rather than columns</li>
+<li>extract ranges of lines based on patterns or line numbers</li>
+</ul>
+<h3 id="find-search-for-files"><code>find</code>: search for files</h3>
+<p>The find commands allows you to search for files based on specified properties (a filter for the file system)</p>
+<ul>
+<li>searches an entire directory tree, testing each file for the required property.</li>
+<li>takes some action for all “matching” files (usually just print the file name)</li>
+</ul>
+<p>Invocation:<br>
+<code>find StartDirectory Tests Actions</code><br>
+where</p>
+<ul>
+<li>the Tests examine file properties like name, type, modification date</li>
+<li>the Actions can be simply to print the name or execute an arbitrary command on the matched file</li>
+</ul>
+<h4 id="regular-expressions">Regular Expressions</h4>
+<p>A <em>regular expression</em> (regex) defines a set of strings.<br>
+A <em>regular expression</em> usually thought of as a pattern<br>
+Specifies a possibly infinite set of strings.<br>
+Regular expressions libraries = available for most languages. In the Unix environment:</p>
+<ul>
+<li>a lot of data is available in plain text format</li>
+<li>many tools make use of regular expressions for searching</li>
+<li>effective use of regular expressions makes you more productive</li>
+</ul>
+<p>A POSIX standard for regular expressions defines the “pattern language” used by many Unix tools.</p>
+<h2 id="shell">Shell</h2>
+<h4 id="command-interpreters">Command Interpreters</h4>
+<p>A command interpreter is a program that executes other programs.<br>
+Aim: allow users to execute the commands provided on a computer system.<br>
+Command interpreters come in two flavours:</p>
+<ul>
+<li>graphical (e.g. Windows or Mac desktop)
+<ul>
+<li>advantage: easy for naive users to start using system</li>
+</ul>
+</li>
+<li>command-line (e.g. Unix shell)
+<ul>
+<li>advantage: programmable, powerful tool for expert users On Unix/Linux, bash has become defacto standard shell.</li>
+</ul>
+</li>
+</ul>
+<h4 id="what-shells-do">What Shells Do</h4>
+<p>The “transformations” applied to input lines include:</p>
+<ul>
+<li>variable expansion … e.g. <code>$1 ${x-20}</code></li>
+<li>file name expansion … e.g.<code>*.c enr.07s?</code></li>
+</ul>
+<p>To “execute that command” the shell needs to:</p>
+<ul>
+<li>find file containing named program (PATH)</li>
+<li>start new process for execution of program</li>
+</ul>
+<h4 id="command-search-path">Command Search PATH</h4>
+<p>Ways of execution:</p>
+<pre class=" language-console"><code class="prism  language-console">$ sh bling # file need not be executable 
+$ ./bling # file must be executable 
+$ bling # file must be executable and . in PATH
+</code></pre>
+<p>Shell searches for programs to run using the colon-separated list of directories in the variable PATH. Beware: only append the current directory to end of your path</p>
+<pre class=" language-console"><code class="prism  language-console">$ PATH=.:$PATH 
+$ cat &gt;hi &lt;&lt; eof
+#!/bin/sh
+echo hello
+eof
+$ chmod 755 cat
+$ cat /home/cs2041/public_html/index.html
+hello
+</code></pre>
+<p>Note ./cat is being run rather /bin/cat Much hard to discover if it happens with another shell script which runs cat. Safer still: don’t put . in your PATH.</p>
+<h4 id="unix-processes-1">Unix Processes</h4>
+<p><a href="https://ibb.co/kXm4yCp"><img src="https://i.ibb.co/XtY74R9/ss3.png" alt="ss3" border="0"></a></p>
+<h4 id="shell-as-interpreter">Shell as Interpreter</h4>
+<p>The shell can be viewed as a programming language interpreter. As with all interpreters, the shell has:</p>
+<ul>
+<li>a state (collection of variables and their values)</li>
+<li>control (current location, execution flow)<br>
+Different to most interpreters, the shell:</li>
+<li>modifies the program code before finally executing it</li>
+<li>has an infinitely extendible set of basic operations</li>
+</ul>
+<p>Basic operations in shell scripts are a sequence of words. CommandName Arg1 Arg2 Arg3 …<br>
+A word defined to be any sequence of:</p>
+<ul>
+<li>non-whitespace characters (e.g. x, y1, aVeryLongWord)</li>
+<li>characters enclosed in double-quotes (e.g. “abc”, “a b c”)</li>
+<li>characters enclosed in single-quotes (e.g. ’abc’, ’a b c’)<br>
+More on shell variables:</li>
+<li>no need to declare shell variables; simply use them</li>
+<li>are local to the current execution of the shell.</li>
+<li>all variables have type string</li>
+<li>initial value of variable = empty string</li>
+<li>note that x=1 is equivalent to x=“1”</li>
+</ul>
+<h4 id="quoting">Quoting</h4>
+<p>Single-quote useful to pass meta-characters in args<br>
+e.g. <code>grep ’S.*[0-9]+$’ &lt; myfile</code><br>
+Double-quotes:</p>
+<ul>
+<li>construct strings using the values of shell variables
+<ul>
+<li>e.g. <code>"x=$x, y=$y"</code> like Java’s <code>("x=" + x + ", y=" + y)</code></li>
+</ul>
+</li>
+<li>prevent empty variables from “vanishing”
+<ul>
+<li>e.g. test <code>"$x" = "abc"</code> vs.  <code>test $x = "abc"</code> in case $x is empty</li>
+</ul>
+</li>
+<li>for values obtained from the command line or a user
+<ul>
+<li>e.g. <code>test -f "$1"</code> vs. <code>test -f $1</code> in case $1 contains a path with spaces e.g. folder /Program Files</li>
+</ul>
+</li>
+</ul>
+<h4 id="back-quotes">Back-quotes</h4>
+<p>Captures output of commands as shell values</p>
+<ol>
+<li>performs variable-substitution (as for double-quotes)</li>
+<li>executes the resulting command and arguments</li>
+<li>captures the standard output from the command</li>
+<li>converts it to a single string</li>
+<li>uses this string as the value of the expression</li>
+</ol>
+<h4 id="connecting-commands">Connecting Commands</h4>
+<p>The shell provides I/O redirection to allow us to change where processes read from and write to.<br>
+<a href="https://ibb.co/YpGVnzH"><img src="https://i.ibb.co/cDdsfG4/ss4.png" alt="ss4" border="0"></a></p>
+<h4 id="exit-status-and-control">Exit Status and Control</h4>
+<p>Exit Status</p>
+<pre><code>zero: command success -&gt; true 
+non-zero: error -&gt; false 
+AND list: execute if all succeeds (0 exit status)
+OR list: sequential success 
+</code></pre>
+<p>Testing - same exit status if succeeds/fails</p>
+<p>Grouping</p>
+<ul>
+<li>commands can be groups w/ (…) (executed in new sub-shell) or {…} (executed in current shell)</li>
+<li>exit status of the last command</li>
+</ul>
+<h2 id="perl---practical-extraction-and-report-language">Perl - Practical Extraction and Report Language</h2>
+<ul>
+<li>Larry Wall (late 80’s) - replacement for awk</li>
+<li>influenced: PHP, Python, Ruby</li>
+<li>easy to write concise, powerful , obscure programs</li>
+<li>currently using Perl 5</li>
+</ul>
+<p>Language Design Principles</p>
+<ul>
+<li>easy/ concise to express common idioms</li>
+<li>provide many different ways to express the same thing</li>
+<li>use defaults where every possible</li>
+<li>exploit powerful concise syntax &amp; accept ambiguity/obscurity in some cases</li>
+<li>create a large language that users will learn subsets of</li>
+</ul>
+<h4 id="syntax-conventions">Syntax Conventions</h4>
+<p>Any unadorned identifiers are either</p>
+<ul>
+<li>names of built in (or other) functions (e.g. chomp, split)</li>
+<li>control-structures (e.g. if, for, foreach)</li>
+<li>literal strings (like the shell!)<br>
+<code>$x = abc;</code> same as <code>$x ="abc";</code></li>
+</ul>
+<p>scalars - single atomic values (number/string)<br>
+arrays - list of values, indexed by string<br>
+hashes - group of values, indexed by string</p>
+<ul>
+<li>no  argument specified: $_ is assumed
+<ul>
+<li>easier to write brief programs</li>
+</ul>
+</li>
+</ul>
+<p>$_:</p>
+<ul>
+<li>acts as the default location to assignment result values (e.g. STDIN)</li>
+<li>acts as default argument to many operations (e.g. print)</li>
+</ul>
+<h4 id="logical-operators">Logical Operators</h4>
+<p><a href="https://ibb.co/PtZs8LB"><img src="https://i.ibb.co/CW5pFcx/ss5.png" alt="ss5" border="0"></a><br>
+<a href="https://ibb.co/pj0fTp9"><img src="https://i.ibb.co/Kx02gH3/ss6.png" alt="ss6" border="0"></a></p>
+<h4 id="anonymous-file-handle">Anonymous File Handle</h4>
+<p>If you supply a uninitialized variable Perl will store an anonymous file handle in it:</p>
+<pre class=" language-perl"><code class="prism  language-perl">open <span class="token keyword">my</span> <span class="token variable">$output</span><span class="token punctuation">,</span> ’<span class="token operator">&gt;</span>’<span class="token punctuation">,</span> ’answer’ <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"Can’t open ..."</span><span class="token punctuation">;</span> 
+<span class="token keyword">print</span> <span class="token variable">$output</span> <span class="token string">"42\n"</span><span class="token punctuation">;</span>
+close <span class="token variable">$output</span><span class="token punctuation">;</span> 
+
+open <span class="token keyword">my</span> <span class="token variable">$input</span><span class="token punctuation">,</span> ’<span class="token operator">&lt;</span>’<span class="token punctuation">,</span> ’answer’ <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"Can’t open ..."</span><span class="token punctuation">;</span>
+<span class="token variable">$answer</span> <span class="token operator">=</span> <span class="token operator">&lt;</span><span class="token variable">$input</span><span class="token operator">&gt;</span><span class="token punctuation">;</span> 
+close <span class="token variable">$input</span><span class="token punctuation">;</span> 
+<span class="token keyword">print</span> <span class="token string">"$answer\n"</span><span class="token punctuation">;</span> <span class="token comment"># prints 42</span>
+</code></pre>
+<p>Use this approach for larger programs to avoid collision between file handle names.</p>
+<h4 id="close">Close</h4>
+<p>Handles can be explitly closed with close(HandleName)</p>
+<ul>
+<li>All handles closed on exit.</li>
+<li>Handle also closed if open done with same name good for lazy coders.</li>
+<li>Data on output streams may be not written (buffered) until close - hence close ASAP.</li>
+</ul>
+<h4 id="function-calls">Function Calls</h4>
+<p>All Perl function calls …</p>
+<ul>
+<li>are call by value (like C) (except scalars aliased to @_)</li>
+<li>are expressions (although often ignore return value)</li>
+</ul>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token variable">&amp;func</span><span class="token punctuation">(</span>arg<span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">}</span><span class="token punctuation">,</span> arg<span class="token punctuation">{</span><span class="token number">2</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token operator">...</span> arg<span class="token punctuation">{</span>n<span class="token punctuation">}</span><span class="token punctuation">)</span> 
+func<span class="token punctuation">(</span>arg<span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">}</span><span class="token punctuation">,</span> arg<span class="token punctuation">{</span><span class="token number">2</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token operator">...</span> arg<span class="token punctuation">{</span>n<span class="token punctuation">}</span><span class="token punctuation">)</span> 
+func arg<span class="token punctuation">{</span><span class="token number">1</span><span class="token punctuation">}</span><span class="token punctuation">,</span> arg<span class="token punctuation">{</span><span class="token number">2</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token operator">...</span> arg<span class="token punctuation">{</span>n<span class="token punctuation">}</span>
+</code></pre>
+<h4 id="control-structure">Control Structure</h4>
+<p><a href="https://imgbb.com/"><img src="https://i.ibb.co/XYpZh1J/ss7.png" alt="ss7" border="0"></a></p>
+<h4 id="terminating">Terminating</h4>
+<p>Normal termination, call: exit 0<br>
+The die function is used for abnormal termination:</p>
+<ul>
+<li>accepts a list of arguments</li>
+<li>concatenates them all into a single string</li>
+<li>appends file name and line number</li>
+<li>prints this string<br>
+-then terminates the Perl interpreter</li>
+</ul>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span> <span class="token operator">-r</span> <span class="token string">"myFile"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> <span class="token keyword">die</span> <span class="token string">"Can’t read myFile: $!\n"</span><span class="token punctuation">;</span> <span class="token punctuation">}</span> 
+<span class="token comment"># or </span>
+<span class="token keyword">die</span> <span class="token string">"Can’t read myFile: $!\n"</span> <span class="token keyword">if</span> <span class="token operator">!</span> <span class="token operator">-r</span> <span class="token string">"myFile"</span><span class="token punctuation">;</span> 
+<span class="token comment"># or </span>
+<span class="token operator">-r</span> <span class="token string">"myFile"</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"Can’t read myFile: $!\n"</span>
+</code></pre>
+<h4 id="perl-and-external-commands">Perl and External Commands</h4>
+<p>Ways to interact w/ external commands / programs:</p>
+<pre class=" language-perl"><code class="prism  language-perl">‘ cmd‘<span class="token punctuation">;</span> 			<span class="token comment">#capture entire output of cmd as single string </span>
+system <span class="token string">"cmd"</span> 		<span class="token comment">#execute cmd and capture its exit status </span>
+only open F<span class="token punctuation">,</span><span class="token string">"cmd|"</span> 	<span class="token comment">#collect cmd output by reading from a stream</span>
+</code></pre>
+<h4 id="file-test-operators">File Test Operators</h4>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token operator">-r</span><span class="token punctuation">,</span> <span class="token operator">-w</span><span class="token punctuation">,</span> <span class="token operator">-x</span>	readable<span class="token punctuation">,</span> writable<span class="token punctuation">,</span> executable 
+<span class="token operator">-e</span><span class="token punctuation">,</span> <span class="token operator">-z</span><span class="token punctuation">,</span> <span class="token operator">-s</span>	exists<span class="token punctuation">,</span> zero size <span class="token punctuation">,</span> non<span class="token operator">-</span>zero size 
+<span class="token operator">-f</span><span class="token punctuation">,</span> <span class="token operator">-d</span><span class="token punctuation">,</span> <span class="token operator">-l</span>	plain file<span class="token punctuation">,</span> directory<span class="token punctuation">,</span> symlink
+
+Usage<span class="token punctuation">:</span> <span class="token keyword">for</span> cheking I<span class="token operator">/</span>O operations 
+	<span class="token operator">-r</span> <span class="token string">"dataFile"</span> <span class="token operator">&amp;&amp;</span> open <span class="token keyword">my</span> <span class="token variable">$data</span><span class="token punctuation">,</span> ’<span class="token operator">&lt;</span>’<span class="token punctuation">,</span> <span class="token string">"dataFile"</span><span class="token punctuation">;</span>
+</code></pre>
+<h2 id="perl-arrays">Perl Arrays</h2>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token variable">@array</span>
+<span class="token variable">$array</span><span class="token punctuation">[</span>index<span class="token punctuation">]</span> <span class="token comment">#element in array @ index</span>
+<span class="token variable">$#</span> <span class="token comment">#index  of last element </span>
+<span class="token variable">$#</span> <span class="token operator">+</span> <span class="token number">1</span> <span class="token comment">#number of elements in array </span>
+</code></pre>
+<p>Examples</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token variable">@a</span> <span class="token operator">=</span> <span class="token punctuation">(</span><span class="token string">"abc"</span><span class="token punctuation">,</span> <span class="token number">123</span><span class="token punctuation">,</span> ’<span class="token operator">x</span>’<span class="token punctuation">)</span><span class="token punctuation">;</span> <span class="token comment"># scalar context ... gives list length $n = @a; # $n == 3 </span>
+
+<span class="token comment"># string context ... gives space-separated elems </span>
+<span class="token variable">$s</span> <span class="token operator">=</span> <span class="token string">"@a"</span><span class="token punctuation">;</span> <span class="token comment"># $s eq "abc 123 x" </span>
+
+<span class="token comment"># scalar context ... gives list length </span>
+<span class="token variable">$t</span> <span class="token operator">=</span> <span class="token variable">@a</span><span class="token operator">.</span><span class="token string">""</span><span class="token punctuation">;</span> <span class="token comment"># $t eq "3" </span>
+
+<span class="token comment"># list context ... gives joined elems </span>
+<span class="token keyword">print</span> <span class="token variable">@a</span><span class="token punctuation">;</span> <span class="token comment"># displays "abc123x"</span>
+</code></pre>
+<p>Arrays don’t need to be declared: they grow and shrink as needed<br>
+" Missing" elements are interpolated e.g.<br>
+<code>$abc[0] = "abc"; $abc[2] = "xyz";</code><br>
+$abc[1] returns “”;</p>
+<h4 id="hashes">Hashes</h4>
+<p>Hash is a set of (key, value) pairs</p>
+<ul>
+<li>undefined returns as “”<br>
+Usage: <code>$hashName{keyString}</code></li>
+</ul>
+<p>Each method produces keys/values in same order. It’s illegal to change hash within loop</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment"># just keys </span>
+<span class="token keyword">foreach</span> <span class="token variable">$key</span> <span class="token punctuation">(</span>keys <span class="token variable">%myHash</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+	<span class="token keyword">print</span> <span class="token string">"($key, $myHash{$key})\n"</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+
+<span class="token comment"># values without keys </span>
+<span class="token keyword">foreach</span> <span class="token variable">$val</span> <span class="token punctuation">(</span>values <span class="token variable">%myHash</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+	<span class="token keyword">print</span> <span class="token string">"(?, $val)\n"</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+
+<span class="token comment"># both together </span>
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token variable">$key</span><span class="token punctuation">,</span><span class="token variable">$val</span><span class="token punctuation">)</span> <span class="token operator">=</span> each <span class="token variable">%myHash</span><span class="token punctuation">)</span> <span class="token punctuation">{</span> 
+	<span class="token keyword">print</span> <span class="token string">"($key, $val)\n"</span><span class="token punctuation">;</span> <span class="token punctuation">}</span>
+
+</code></pre>
+<h2 id="modules">Modules</h2>
+<p>use keyword --&gt; module name prefixed with ::</p>
+<h4 id="pragmas">Pragmas</h4>
+<ul>
+<li>way of controlling some aspects of the interpreter’s behaviour (introduced by the <em>use</em> keyword)
+<ul>
+<li>e.g. use <code>English</code>- <code>$NF=$.</code> and <code>$ARG = $_</code></li>
+<li>use integer;  - truncates all arithmetic operations to int, effective to end of the enclosing block</li>
+<li>use strict ‘vars’; - all variables use my</li>
+</ul>
+</li>
+</ul>
+</div>
+</body>
+
+</html>

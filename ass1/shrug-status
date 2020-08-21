@@ -1,0 +1,100 @@
+#!/bin/dash
+lastcommit=".commit.0"
+index="./shrug/index" 
+
+latest_commit(){
+    cd .shrug
+    for k in .commit.*
+    do 
+        echo $k >> commits
+    done
+    lastcommit=`tail -1 commits`
+    rm commits
+    cd ..
+}
+
+three_comp(){
+    diff $1 $2 > /dev/null #curr + index 
+    comp1=$?
+    diff $1 $3 > /dev/null # curr + repo 
+    comp2=$?
+    diff $2 $3 > /dev/null # index + repo
+    comp3=$?
+
+    echo "comparing 3 "
+    if test comp1 -eq 1 || test comp2 -eq 1 
+    then
+        if test comp1 -eq 0 && comp3 -eq comp0
+        then 
+            echo -n "same as repo" > .status/$1
+        else
+            echo -n "file changed" > $1
+            # all 3 diff files
+            if test comp1 -eq 1 && test comp2 -eq 1
+            then 
+                echo -n ", different changes staged for commit" >> .status/$1
+            # index and repo = diff ; index and repo same
+            elif test comp3 -eq 0
+            then
+                echo -n ", changes staged for commit" >> .status/$1 
+            # curr + index diff 
+            elif test comp1 -eq 1
+            then 
+                echo -n ", changes not staged for commit" >> .status/$1
+            fi 
+        fi
+    fi
+}
+
+compare_two(){
+    if test ! -e $1 && test ! -e $2
+    then
+        echo -n ", deleted" >> .status/$1
+    elif test ! -e $1 && test -e $2
+    then
+        echo -n ", file deleted" >> .status/$1
+    fi
+}
+
+
+# compare curr + index + repo 
+check_three(){
+    commit_path=".shrug/$lastcommit"
+    if test -e "$commit_path/$1" && test -e "$index/$1"
+    then 
+        three_comp "$1" "$index/$1" "$commit_path/$1"
+    elif test -e "$index/$1"
+    then
+        compare_two "$1" "$index/$1"
+    fi
+}
+
+#assume index folder is given
+cd .status 
+for i in *
+do
+    cd ..
+    if test -d .shrug/$lastcommit #file exists in all test -d $index && 
+    then
+        latest_commit
+        check_three $i 
+    else
+        compare_two $i $index/$i 
+    fi 
+    cd .status
+done 
+
+for i in *
+do 
+    if test ! -s $i
+    then
+        echo "untracked" >> $i 
+    else
+        #strip untracked if its there
+        grep "untracked, " $i| sed 's/^untracked, //' > shrug-log
+    fi
+done
+
+grep "" *| sed 's/:/ - /g'
+cd  .. 
+

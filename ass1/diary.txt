@@ -1,0 +1,26 @@
+Date        |Start      |Stop       |Activity       |Comments
+------------+-----------+-----------+---------------+-----------------------
+13/07/20     18:00       22:00       Coding          implemented basic functionality for: init, add, commit, log
+             22:00       22:10       Testing         Passed 4/9 autotest for subset 0 
+             22:30       23:45       Coding          Implemented shrug-show
+             23:45       23:53       Testing         Passed 8/9 autotest for  subset 0
+14/07/20     00:00       00:49       Coding+Testing  Added diff in shrug-commit. Passed 9/9 autotest for subset 0
+             01:00       02:00       Coding          Implemented commit -a 
+             02:00       02:05       Testing         Passed 1_10, 1_11 tests
+             15:45       17:45       Coding          Implemented rm
+             17:45       18:50       Testing         Passed 1_12, 1_13; fixed shrug-add and commit 
+             19:00       20:00       Coding          Adding changes to shrug-rm 
+             21:45       23:00       Coding+Test     Rolling back changes to shrug-rm. Passed 1_14
+             23:00       23:59       Coding          Added error messages - shrug-rm doesnt pass everything
+15/07/20     13:15       15:00       Coding          Added error messages for --cached
+             16:00       16:05       Testing         Passed 1_15, 1_16
+             16:05                   Submission      Submitted -rm for backup 
+             16:30       17:00       Coding          Implemented helper function update_tracker
+             17:00       20:00       Coding          Implemented printing functionality of shrug-status
+             20:30       21:03       Testing         Multiple bugs for shrug-status 
+             21:03                   Coding          Writing tests 00-10
+
+Notes: the shrug-status was based off on the ability to make a diretory .status to track
+status and store them. However, this failed autotests because the folder is unexpected.
+
+Helper shell update_tracker was also unexpected. 

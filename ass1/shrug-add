@@ -1,0 +1,38 @@
+#!/bin/dash
+
+# form a subdirectory in .shrug
+# if index folder exists in .shrug then continue else make it 
+if test -d ".shrug"
+then
+    cd .shrug
+    if test -d "index"
+    then
+        continue
+    else
+        mkdir "index"
+    fi
+    cd ..
+else
+    echo "shrug-add: error: no .shrug directory containing shrug repository exists"
+    exit 1
+fi
+
+path=".shrug/index" 
+
+for  i in $@
+do
+    if test -f $i
+    then
+        #echo $i 
+        cp "$i" "$path"
+    else #if not in main directory- remove from the index
+        if test -f $path/$i
+        then
+            rm $path/$i
+        else
+            echo "shrug-add: error: can not open '$i'"
+            exit 1
+        fi
+    fi
+    # echo -n ", added to index" >> .status/$i 
+done

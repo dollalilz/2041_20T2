@@ -1,0 +1,39 @@
+#!/bin/dash
+commit=$(echo $1 | cut -d ':' -f1)
+filename=$(echo $1 | cut -d ':' -f2)
+
+#check if .shrug and index exist 
+if test ! -d ".shrug"
+then
+    exit 1
+fi
+
+cd .shrug
+
+#check if its an int 
+if test $commit -ge 0 2>/dev/null
+then
+    if test -d ".commit.$commit"
+    then 
+        cd .commit.$commit
+        if test -f $filename
+        then
+            cat $filename
+        else
+            echo "shrug-show: error: '$filename' not found in commit $commit"
+            exit 1
+        fi
+    else
+        echo "shrug-show: error: unknown commit '$commit'"
+        exit 1
+    fi
+else 
+    cd index
+    if test -f $filename
+    then
+        cat $filename
+    else
+        echo "shrug-show: error: '$filename' not found in index"
+        exit 1
+    fi 
+fi

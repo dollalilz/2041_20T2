@@ -1,0 +1,99 @@
+#!/bin/dash
+
+#declare default variables
+curr=".commit.0"
+lastcommit=".commit.0"
+i=0
+option=$1
+
+# if .shrug folder doesnt exist 
+if test ! -d ".shrug"
+then
+    echo "shrug-commit: error: no .shrug directory containing shrug repository exists"
+    exit 1 
+fi
+
+#message must be included in the commit
+# 2 args given
+if test $# -eq 2
+then
+    message=$2
+# 3 args given
+elif test $# -eq 3
+then
+    message=$3 
+else
+    echo "Usage: $0 [-a] -m <message>"
+    exit 1
+fi
+
+make_commit(){
+    while test -d $curr #loop through the directories 
+    do
+        i=`expr $i + 1`
+        curr=".commit.$i"
+    done
+    echo  "Committed as commit $i"
+    mkdir $curr
+}
+
+# loop through all the commit folders to find the latest commit 
+latest_commit(){
+    for k in .commit.*
+    do 
+        echo $k >> commits
+    done
+    lastcommit=`tail -1 commits`
+    rm commits
+}
+#saves  all the files from the index to the repo
+# inside the index directory 
+add_all(){
+    cd index
+    list=`ls| wc -l`
+    if test $list -gt 0
+    then 
+        for j in *
+        do
+            cp $j "../$curr"
+        done
+        cd ..
+        echo "$i $message" >> log
+    else
+        cd .. 
+    fi
+}
+
+# check if -a option 
+if test $option = "-a"
+then
+    # add all the current index
+    for file in *
+    do
+        shrug-add $file
+    done
+fi
+
+# main function 
+cd .shrug #since we know that .shrug exists 
+if test -d "index"
+then
+    # if at least 1 commit folder exists
+    if test -d $curr
+    then
+        latest_commit # update latest commit folder name
+        diff -r index $lastcommit > /dev/null
+        if test $? -eq 0
+        then
+            echo "nothing to commit"
+            exit 1
+        fi
+    fi
+    make_commit #make a commit folder in .shrug
+    add_all # add all of the index in the commit folder
+else
+    echo "shrug-commit: error: no index directory found"
+    exit 1
+fi
+
+

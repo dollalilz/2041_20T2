@@ -1,0 +1,16 @@
+#!/bin/dash
+if test -d ".shrug" 
+then
+    cd .shrug
+    if test -f "log"
+        then
+            tac log
+    else
+        echo "No log found. Exiting .. "
+        exit 1
+    fi 
+else
+    echo ".shrug not found. Exiting.. "
+    exit 1
+fi
+

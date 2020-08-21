@@ -1,0 +1,384 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>tutorial_stuff</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2 id="week-1">Week 1</h2>
+<h3 id="operating-system">Operating system</h3>
+<p>An operating system is a piece of software that manages the hardware of a computer and provides an interface to the programs that run on the computer.</p>
+<p>Operating systems on phones in your tut room might include Linux (Android), IOS (iPhone), Windows.</p>
+<p>CSE’s lab computers and servers run Linux.</p>
+<p>Give five reasons why this attempt to search a file for HTML paragraph and break tags may fail.<br>
+<code>$grep &lt;p&gt;|&lt;br&gt; /tmp/index.html</code></p>
+<p>Answer:<br>
+The characters ‘&lt;’, ‘&gt;’ and ‘|’ are part of the shell’s syntax (meta characters) and the shell will interpret them rather than passing them to grep. This can be avoided with singleor double-quotes or backslash, e.g:</p>
+<pre><code>egrep '&lt;p&gt;|&lt;br&gt;' /tmp/index.html
+egrep "&lt;p&gt;|&lt;br&gt;" /tmp/index.html
+egrep \&lt;p&gt;\|&lt;br\&gt; /tmp/index.html
+</code></pre>
+<p>For historical reasons ‘grep’ doesn’t implement alternation (’|’). You need to use ‘egrep’ or (‘grep -E’) instead to get the full power of regular expressions.</p>
+<p>The supplied regular expression won’t match the HTML tags if they are in upper case (A-Z), e.g: </p><p>. The match can be case insensitive by changing the regular expression or using grep’s -i flag</p>
+<pre><code>egrep  '&lt;[pP]&gt;|&lt;[bB][rR]&gt;' /tmp/index.html
+egrep -i '&lt;p&gt;|&lt;br&gt;' /tmp/index.html
+</code></pre>
+<p>The supplied regular expression also won’t match HTML tags containing spaces, e.g: </p><p>. This can be remedied by changing the regular expression</p>
+<pre><code>egrep -i '&lt; *(p|br) *&gt;' /tmp/index.html
+</code></pre>
+<p>The HTML tag may contain attributes, e.g: </p><p class="lead_para">. Again can be remedied by changing the regular expression or using egrep’s -w flag.</p>
+<pre><code>egrep -i '&lt;(p|br)[^&gt;]*&gt;' /tmp/index.html
+</code></pre>
+<p>This will still match </p><pre>. This can be avoided using a more complex regex:</pre><p></p>
+<pre><code>egrep -i '&lt;(p|br)( [^&gt;]*)*&gt;' /tmp/index.html
+</code></pre>
+<p>The HTML tag might contain a newline. This is more difficult to handle with an essentially line-based tool like egrep.</p>
+<p>egrep  -v . : prints all the empty lines in its input<br>
+same as egrep ‘^$’</p>
+<p>()? - optional match</p>
+<h2 id="week-2">Week 2</h2>
+<pre><code>$ my_first_shell_script.sh
+my_first_shell_script.sh: command not found
+</code></pre>
+<ul>
+<li>
+<p><strong>Problem:</strong>  you might not have the current directory in your  <code>$PATH</code>.</p>
+<p><strong>Solution:</strong>  either add  <code>.</code>  to the end of your  <code>$PATH</code>  (via  <code>PATH=$PATH:.</code>),  <em>or</em>  type the command name as  <code>./my_first_shell_script.sh</code></p>
+</li>
+<li>
+<p><strong>Problem:</strong>  the  <code>my_first_shell_script.sh</code>  file may not be executable.</p>
+<p><strong>Solution:</strong>  either make the file executable, by running (e.g.,)  <code>chmod +x my_first_shell_script.sh</code>,  <em>or</em>  execute it via the command  <code>sh my_first_shell_script.sh</code>  (also fixes the first problem)</p>
+</li>
+<li>
+<p><strong>Problem:</strong>  you might have gotten the  <code>#!/bin/sh</code>  line wrong.</p>
+<p><strong>Solution:</strong>  check the first line of the script, to make sure there are no spurious spaces or spelling mistakes, and then check that the shell is called  <code>/bin/sh</code>  on your system</p>
+</li>
+<li>
+<p><strong>Problem:</strong>  the  <code>my_first_shell_script.sh</code>  file has been transferred from a Windows-based computer in binary mode, and there is a carriage-return character, which is often rendered as  <code>^M</code>  (or  <code>'\r'</code>  in C) after  <code>/bin/sh</code>.</p>
+<p><strong>Solution:</strong>  Run the command  <code>dos2unix my_first_shell_script.sh</code>, which will remove the pesky  <code>^M</code>s.</p>
+</li>
+</ul>
+<p>Note that some of these problems might result in a message like:  <code>my_first_shell_script.sh: Permission denied</code>, depending on which shell you’re using.</p>
+<p>The bash-specific syntax ((…)) is used for arithmetic<br>
+This increases the readability but reduces the portability</p>
+<p>The following shell script emulates the  <a href="https://manpages.debian.org/jump?q=cat.1">cat(1)</a>  command using the built-in shell commands  <a href="https://manpages.debian.org/jump?q=read.1">read(1)</a>  and  <a href="https://manpages.debian.org/jump?q=echo.1">echo(1)</a>:</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/sh</span>
+<span class="token keyword">while</span> <span class="token function">read</span> line
+<span class="token keyword">do</span>
+    <span class="token keyword">echo</span> <span class="token string">"<span class="token variable">$line</span>"</span>
+<span class="token keyword">done</span>
+</code></pre>
+<ol>
+<li>
+<p>What are the differences between the above script and the real  <a href="https://manpages.debian.org/jump?q=cat.1">cat(1)</a>  command?</p>
+</li>
+<li>
+<p>modify the script so that it can concatenate multiple files from the command line, like the real  <a href="https://manpages.debian.org/jump?q=cat.1">cat(1)</a></p>
+</li>
+</ol>
+<p>(Hint: the shell’s control structures — for example,  <code>if</code>,  <code>while</code>,  <code>for</code>  — are commands in their own right, and can form a component of a pipeline.)</p>
+<h4 id="answer">Answer:</h4>
+<ol>
+<li>
+<p>Some differences:</p>
+<ul>
+<li>
+<p>the script doesn’t concatenate files named on the command line, just standard input</p>
+</li>
+<li>
+<p>it doesn’t implement all of the  <a href="https://manpages.debian.org/jump?q=cat.1">cat(1)</a>  options</p>
+</li>
+<li>
+<p>the appearance of lines may be altered: space at start of line is removed, and runs of multiple spaces will be compressed to a single space.</p>
+</li>
+</ul>
+</li>
+<li>
+<p>A shell script to concatenate multiple files specified on command line:</p>
+</li>
+</ol>
+<pre class=" language-bash"><code class="prism  language-bash">   <span class="token comment">#!/bin/sh</span>
+   <span class="token keyword">for</span> f <span class="token keyword">in</span> <span class="token string">"<span class="token variable">$@</span>"</span>
+   <span class="token keyword">do</span>
+       <span class="token keyword">if</span> <span class="token punctuation">[</span> <span class="token operator">!</span> -r <span class="token string">"<span class="token variable">$f</span>"</span> <span class="token punctuation">]</span>
+       <span class="token keyword">then</span>
+           <span class="token keyword">echo</span> <span class="token string">"No such file: <span class="token variable">$f</span>"</span>
+       <span class="token keyword">else</span>
+           <span class="token keyword">while</span> <span class="token function">read</span> line
+           <span class="token keyword">do</span>
+               <span class="token keyword">echo</span> <span class="token string">"<span class="token variable">$line</span>"</span>
+           <span class="token keyword">done</span> <span class="token operator">&lt;</span> <span class="token variable">$f</span>
+       <span class="token keyword">fi</span>
+   <span class="token keyword">done</span>
+</code></pre>
+<h4 id="cases-pass-fail-etc">Cases: pass fail etc</h4>
+<ul>
+<li>test doesn’t support pattern matching in shell</li>
+</ul>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/sh</span>
+<span class="token keyword">while</span> <span class="token function">read</span> stid mark extras
+<span class="token keyword">do</span>
+    <span class="token keyword">case</span> <span class="token string">"<span class="token variable">$mark</span>"</span> <span class="token keyword">in</span>
+    <span class="token punctuation">[</span>0-9<span class="token punctuation">]</span> <span class="token operator">|</span> <span class="token punctuation">[</span>0-4<span class="token punctuation">]</span><span class="token punctuation">[</span>0-9<span class="token punctuation">]</span><span class="token punctuation">)</span>    <span class="token keyword">echo</span> <span class="token variable">$stid</span> FL <span class="token punctuation">;</span><span class="token punctuation">;</span>
+    5<span class="token punctuation">[</span>0-9<span class="token punctuation">]</span> <span class="token operator">|</span> 6<span class="token punctuation">[</span>0-4<span class="token punctuation">]</span><span class="token punctuation">)</span>       <span class="token keyword">echo</span> <span class="token variable">$stid</span> PS <span class="token punctuation">;</span><span class="token punctuation">;</span>
+    6<span class="token punctuation">[</span>5-9<span class="token punctuation">]</span> <span class="token operator">|</span> 7<span class="token punctuation">[</span>0-4<span class="token punctuation">]</span><span class="token punctuation">)</span>       <span class="token keyword">echo</span> <span class="token variable">$stid</span> CR <span class="token punctuation">;</span><span class="token punctuation">;</span>
+    7<span class="token punctuation">[</span>5-9<span class="token punctuation">]</span> <span class="token operator">|</span> 8<span class="token punctuation">[</span>0-4<span class="token punctuation">]</span><span class="token punctuation">)</span>       <span class="token keyword">echo</span> <span class="token variable">$stid</span> DN <span class="token punctuation">;</span><span class="token punctuation">;</span>
+    8<span class="token punctuation">[</span>5-9<span class="token punctuation">]</span> <span class="token operator">|</span> 9<span class="token punctuation">[</span>0-9<span class="token punctuation">]</span> <span class="token operator">|</span> 100<span class="token punctuation">)</span> <span class="token keyword">echo</span> <span class="token variable">$stid</span> HD <span class="token punctuation">;</span><span class="token punctuation">;</span>
+    *<span class="token punctuation">)</span>                     <span class="token keyword">echo</span> <span class="token string">"<span class="token variable">$stid</span> ?? (<span class="token variable">$mark</span>)"</span> <span class="token punctuation">;</span><span class="token punctuation">;</span>
+    esac
+<span class="token keyword">done</span>
+</code></pre>
+<p>If the input file used comma as a separator, the easiest thing would be to run the input through  <a href="https://manpages.debian.org/jump?q=tr.1">tr(1)</a>  to convert the commas to spaces, and pipe the output into the  <code>grades</code>  program:</p>
+<p>tr ‘,’ ’ ’ &lt;data | grades</p>
+<p>Alternatively, you could alter the  input field separator  for the shell, by setting  <code>IFS=,</code>.</p>
+<p>output: date(1)<br>
+<code>Friday 5 August 17:37:01 AEST 2016</code></p>
+<ol start="20">
+<li>difference between the two outputs</li>
+</ol>
+<pre><code>wc -l *.tex
+echo `wc -l *.tex`
+</code></pre>
+<p>first:</p>
+<pre><code> 20 a.tex
+ 30 b.tex
+ 50 total
+</code></pre>
+<p>second: same but backquotes = single string which is taken by the shell and passed as arguments to the echo command. In process of capturing the output, it is trimmed of trailing newlines. Becomes a sequence of words.<br>
+<code>20 a.tex 30 b.tex 50 total</code></p>
+<h2 id="week-3">Week 3</h2>
+<p>A shell script is executed by a separate shell so changes to its working directory affect only it. Similarly changes to variables in it, affect only it.</p>
+<p>You can indicate that the commands in a file are to be run by a shell rather than executed as a separate program like this…</p>
+<pre><code>./start_lab03.sh
+pwd
+/home/z1234567/labs/03
+echo $ex1 $ex2 $ex3 $ex4
+jpg2png email_image date_image tag_music
+</code></pre>
+<p><code>sed's/COMP2041/COMP2042/g;s/COMP9044/COMP9042/g' $file &gt;$temporary_file &amp;&amp; mv $temporary_file $file</code></p>
+<p>sed -i is not universally supported<br>
+test and = -a : and</p>
+<p>The shell does not replace tilde (~) with the user’s home directory inside double-quotes, and does not handle spaces in filenames correctly</p>
+<h2 id="week-5">Week 5</h2>
+<h3 id="what-does-git-init-do">What does <strong>git init</strong> do?</h3>
+<p>How does this differ from  <strong>shrug-init</strong></p>
+<p><strong>git init</strong>  creates an empty repository as does  <strong>shrug-init</strong></p>
+<p><strong>git init</strong>  uses the sub-directory  <strong>.git</strong>  (by default)</p>
+<p><strong>shrug-init</strong>  uses the sub-directory  <strong>.shrug</strong>  inside  <strong>.git</strong></p>
+<p><strong>git init</strong>  creates many files and subdirectories</p>
+<p><strong>shrug-init</strong>  only  <em>needs</em>  to create  <strong>.shrug</strong>  but  <em>can</em>  create other things inside  <strong>.shrug</strong></p>
+<h3 id="what-do-git-add--file-and-shrug-add--file-do">What do <strong>git add  <em>file</em></strong> and <strong>shrug-add  <em>file</em></strong> do?</h3>
+<p>Adds a copy of  <strong><em>file</em></strong>  to the repository’s  <strong>index</strong>.</p>
+<h3 id="what-is-the-index-in-shrug-and-git-and-where-does-it-get-stored">What is the index in <strong>shrug</strong> (and <strong>git</strong>), and where does it get stored?</h3>
+<p>Files get added to the repositoy via the index so its somethimes called a staging area.</p>
+<p>It must be stored in the  <strong>.shrug</strong>  directory. exactly how you store it is up to you.</p>
+<p>You might create a directory  <strong>.shrug/index/</strong>  and store the files there.</p>
+<h3 id="what-is-a-commit-in-shrug-and-git-and-where-does-it-get-stored">What is a commit in <strong>shrug</strong> (and <strong>git</strong>), and where does it get stored?</h3>
+<p>A commit preserves the state of all files in the index.</p>
+<p>It must be stored in  <strong>.shrug</strong>. exactly how you store it is up to you.</p>
+<p>You might create a directory  <strong>.shrug/<em>commit-number/</em></strong>  and store the files there.</p>
+<h3 id="what-is-a-merge-conflict---and-how-do-they-get-handled-in-git-and-shrug">What is a merge conflict - and how do they get handled in git and shrug?</h3>
+<p>A merge conflict occurs when we attempt to merge branches and conflicting changes to the same part of a file have occured in both branches.</p>
+<p><strong>shrug</strong>  just stops with an error.</p>
+<p><strong>git</strong>  shows you the conflicting changes and lets you resolve the conflict.</p>
+<h2 id="week-7">Week 7</h2>
+<p>word_frequency.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token number">1</span><span class="token operator">.</span>  <span class="token comment">#!/usr/bin/perl -w</span>
+   
+   <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       <span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">tr/A-Z/a-z/</span><span class="token punctuation">;</span>
+       <span class="token keyword">foreach</span> <span class="token variable">$word</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">/[a-z]+/g</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+           <span class="token variable">$count</span><span class="token punctuation">{</span><span class="token variable">$word</span><span class="token punctuation">}</span><span class="token operator">++</span><span class="token punctuation">;</span>
+       <span class="token punctuation">}</span>
+   <span class="token punctuation">}</span>
+   <span class="token variable">@words</span> <span class="token operator">=</span> keys <span class="token variable">%count</span><span class="token punctuation">;</span>
+   <span class="token variable">@sorted_words</span> <span class="token operator">=</span> sort <span class="token punctuation">{</span><span class="token variable">$count</span><span class="token punctuation">{</span><span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$count</span><span class="token punctuation">{</span><span class="token variable">$b</span><span class="token punctuation">}</span><span class="token punctuation">}</span> <span class="token variable">@words</span><span class="token punctuation">;</span>
+   <span class="token keyword">foreach</span> <span class="token variable">$word</span> <span class="token punctuation">(</span><span class="token variable">@sorted_words</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+       printf <span class="token string">"%d %s\n"</span><span class="token punctuation">,</span> <span class="token variable">$count</span><span class="token punctuation">{</span><span class="token variable">$word</span><span class="token punctuation">}</span><span class="token punctuation">,</span> <span class="token variable">$word</span><span class="token punctuation">;</span>
+   <span class="token punctuation">}</span>
+</code></pre>
+<h2 id="week--8">Week  8</h2>
+<pre><code>$webpage = `wget -q -O- '$url'`;
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+<span class="token comment"># written by andrewt@cse.unsw.edu.au as a COMP2041 example</span>
+<span class="token comment"># fetch specified web page and count the HTML tags in them</span>
+
+<span class="token comment"># The regex code below doesn't handle a number of cases.  It is often</span>
+<span class="token comment"># better to use a library to properly parse HTML before processing it.</span>
+<span class="token comment"># But beware illegal HTML is common &amp; often causes problems for parsers.</span>
+
+<span class="token keyword">use</span> LWP<span class="token punctuation">:</span><span class="token punctuation">:</span>Simple<span class="token punctuation">;</span>
+
+<span class="token variable">$sort_by_frequency</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">foreach</span> <span class="token variable">$arg</span> <span class="token punctuation">(</span><span class="token variable">@ARGV</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$arg</span> <span class="token operator">eq</span> <span class="token string">"-f"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token variable">$sort_by_frequency</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        push <span class="token variable">@urls</span><span class="token punctuation">,</span> <span class="token variable">$arg</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">foreach</span> <span class="token variable">$url</span> <span class="token punctuation">(</span><span class="token variable">@urls</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token variable">$webpage</span> <span class="token operator">=</span> get <span class="token variable">$url</span><span class="token punctuation">;</span>
+    <span class="token variable">$webpage</span> <span class="token operator">=~</span> <span class="token regex">tr/A-Z/a-z/</span><span class="token punctuation">;</span>
+    <span class="token variable">$webpage</span> <span class="token operator">=~</span> <span class="token regex">s/&lt;!--.*?--&gt;//g</span><span class="token punctuation">;</span> <span class="token comment"># remove comments</span>
+    <span class="token variable">@tags</span> <span class="token operator">=</span> <span class="token variable">$webpage</span> <span class="token operator">=~</span> <span class="token regex">/&lt;\s*(\w+)/g</span><span class="token punctuation">;</span>
+    <span class="token keyword">foreach</span> <span class="token variable">$tag</span> <span class="token punctuation">(</span><span class="token variable">@tags</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token variable">$tag_count</span><span class="token punctuation">{</span><span class="token variable">$tag</span><span class="token punctuation">}</span><span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$sort_by_frequency</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token variable">@sorted_tags</span> <span class="token operator">=</span> sort <span class="token punctuation">{</span><span class="token variable">$tag_count</span><span class="token punctuation">{</span><span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$tag_count</span><span class="token punctuation">{</span><span class="token variable">$b</span><span class="token punctuation">}</span> <span class="token operator">||</span> <span class="token variable">$a</span> <span class="token operator">cmp</span> <span class="token variable">$b</span><span class="token punctuation">}</span> keys <span class="token variable">%tag_count</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token variable">@sorted_tags</span> <span class="token operator">=</span> sort keys <span class="token variable">%tag_count</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token string">"$_ $tag_count{$_}\n"</span> <span class="token keyword">foreach</span> <span class="token variable">@sorted_tags</span><span class="token punctuation">;</span>
+<span class="token comment">## Week  9</span>
+Suppose typing ls <span class="token operator">-l</span> yields<span class="token punctuation">:</span>
+</code></pre>
+<p>-rw-r–r--    1 cs2041   cs2041         99 Sep 14 10:14 a<br>
+-rw-r–r--    1 cs2041   cs2041         26 Oct 20 18:16 b<br>
+-rw-r–r--    1 cs2041   cs2041         13 Sep 14 10:14 Makefile</p>
+<pre><code>and typing  more Makefile  yields:
+
+a: b  
+cp b a
+
+What happens if  make  is typed?
+
+What happens if  make  is typed a second time?
+
+#### Answer:
+
+`cp b a`
+
+Nothing.
+
+The following is an attempt by an inexperienced developer to produce a Makefile for a small project consisting of a main program (main.c), one module (module.c and module.h) plus a file of common definitions (defs.h). Both C files #include the two header files. The final product is called "myapp".
+</code></pre>
+<p>$CC=gcc-4.4<br>
+myapp:  main.o module.o defs.h<br>
+$CC -c -o $&lt; main.o module.o</p>
+<p>main.o:  module.h module.c defs.h<br>
+$CC -c main.o</p>
+<p>module.o:  module.h defs.h<br>
+$CC -c main.o</p>
+<p>main.c:  defs.h</p>
+<pre><code>There are 6+ errors in the Makefile. Identify them and rewrite the Makefile so it correctly reflects the dependencies and rules for building myapp.
+
+#### Answer:
+
+-   Incorrect variable syntax - the syntax is wrong for the assignment to the variable CC and in all of its uses.
+-   Incorrect rule syntax - the build (compile) commands should be indented with a tab.
+-   Rule 1: the final application only depends on the object files. It may indirectly depend on headers, but only through the object files.
+-   Rule 1 command: the flag  -c  is used only for compiling, not for linking.
+-   Rule 1 command: the implicit variable for the target is  $@, not  $&lt;.
+-   Rule 2: main.o depends on the header files and its own C file, not on any other C file (you don't have to recompile main.c if module.c changes).
+-   Rule 3: module.o depends on module.c too.
+-   Rule 4 doesn't make sense: main.c is a source file that doesn't depend on anything. Remove the rule.
+
+The revised Makefile is
+</code></pre>
+<p>CC=gcc-4.4</p>
+<p>myapp: main.o module.o<br>
+$(CC) -o $@ main.o module.o</p>
+<p>main.o: main.c module.h defs.h<br>
+$(CC) -c main.c</p>
+<p>module.o: module.c module.h defs.h<br>
+$(CC) -c module.c</p>
+<pre><code>#### Hash example 
+given the road distances between a number of towns (on standard input) calculates the shortest journey between two towns specified as arguments. Here is an example of how your program should behave.
+```perl 
+#!/usr/bin/perl -w
+# find shortest path between two towns
+
+die "Usage: $0 &lt;start&gt; &lt;finish&gt;\n" if @ARGV != 2;
+$start = $ARGV[0];
+$finish = $ARGV[1];
+
+while (&lt;STDIN&gt;) {
+    /(\S+)\s+(\S+)\s+(\d+)/ || next;
+    $distance{$1}{$2} = $3;
+    $distance{$2}{$1} = $3;
+}
+
+$shortest_journey{$start} = 0;
+$route{$start} = "";
+@unprocessed_towns = keys %distance;
+$current_town = $start;
+while ($current_town &amp;&amp; $current_town ne $finish) {
+    @unprocessed_towns = grep {$_ ne $current_town} @unprocessed_towns;
+
+    foreach  $town (@unprocessed_towns) {
+        if (defined $distance{$current_town}{$town}) {
+            my $d = $shortest_journey{$current_town} + $distance{$current_town}{$town};
+            if (!defined $shortest_journey{$town} || $shortest_journey{$town} &gt; $d) {
+                $shortest_journey{$town} = $d;
+                $route{$town} = "$route{$current_town} $current_town";
+            }
+        }
+    }
+
+    my $min_distance = 1e99;   # must be larger than any possible distance
+    $current_town = "";
+    foreach $town (@unprocessed_towns) {
+        if (defined $shortest_journey{$town} &amp;&amp; $shortest_journey{$town} &lt; $min_distance) {
+            $min_distance = $shortest_journey{$town};
+            $current_town = $town;
+        }
+    }
+}
+
+if (!defined $shortest_journey{$finish}) {
+    print "No route from $start to $finish.\n";
+} else {
+    print "Shortest route is length = $shortest_journey{$finish}:$route{$finish} $finish.\n";
+}
+</code></pre>
+<h2 id="week-10">Week 10</h2>
+<p>These commands both copy a directory tree to a CSE server.</p>
+<pre><code>$scp -r directory1/ z1234567@login.cse.unsw.edu.au:directory2/
+$rsync -a directory1/ z1234567@login.cse.unsw.edu.au:directory2/
+</code></pre>
+<p>What underlies them?</p>
+<p>How do they differ?</p>
+<p>Why are these differences important?</p>
+<h4 id="answer-1">Answer:</h4>
+<p>Both command use  <code>ssh</code>  to connect to the remote machine.</p>
+<p><code>rsync</code>  will be more efficient if  <code>directory2</code>  already exists with similar contents. It will copy only files which are different and if only part of a file has changed it can copy only the changed bytes. This is is much more efficient when we are repeatedly making copies, e.g. for backups, particularly over a slow connection</p>
+<p><code>rsync -a</code>  also copies metadata such as file permissions and modification data which may be very important.</p>
+<p><code>scp -rp</code>  would copy metadata.</p>
+<p>Question: Write a  <em>shell script</em>  called  <code>check</code>  that looks for duplicated student ids in a file of marks for a particular subject. The file consists of lines in the following format:</p>
+<pre><code>2233445 David Smith 80
+2155443 Peter Smith 73
+2244668 Anne Smith 98
+2198765 Linda Smith 65
+
+The output should be a list of student ids that occur 2+ times, separated by newlines. (i.e. any student id that occurs more than once should be displayed on a line by itself on the standard output).
+
+Sample solution
+
+#!/bin/sh
+
+cut -d' ' -f1 &lt; Marks | sort | uniq -c | egrep -v '^ *1 ' | sed -e 's/^.* //'
+
+**Explanation:**
+
+1.  `cut -d' ' -f1 &lt; Marks`  ... extracts the student ID from each line
+    
+2.  `sort | uniq -c`  ... sorts and counts the occurrences of each ID
+    
+3.  IDs that occur once will be on a line that begins with spaces followed by  `1`  followed by a TAB
+    
+4.  `grep -v '^ *1 '`  removes such lines, leaving only IDs that occur multiple times
+    
+5.  `sed -e 's/^.* //'`  gets rid of the counts that  `uniq -c`  placed at the start of each line
+</code></pre>
+</div>
+</body>
+
+</html>

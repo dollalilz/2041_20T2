@@ -1,0 +1,184 @@
+#!/bin/dash
+
+lastcommit=".commit.0"
+index_path=".shrug/index"
+marker="placeholder" # have to initialise as a string 
+
+if test $# -lt 1
+then
+    echo "usage: shrug-rm [--force] [--cached] <filenames>"
+    exit 1
+fi 
+
+rm_index(){
+    if test -d .shrug/index
+    then
+    cd .shrug/index
+    rm_currdir $@
+    fi 
+}
+
+rm_currdir(){
+    for i  in $@
+    do
+        if test -e $i
+        then
+            rm $i
+        fi
+    done
+}
+
+latest_commit(){
+    cd .shrug
+    for k in .commit.*
+    do 
+        echo $k >> commits
+    done
+    lastcommit=`tail -1 commits`
+    rm commits
+    cd ..
+}
+
+# compare curr + index
+check_index(){
+    check_diff "$1" "$index_path/$1"
+}
+
+# compare curr + index
+working_dir_onlyfile(){
+    #echo "checking onlyfile"
+    if test ! -e "$index_path/$1"
+    then 
+        echo "shrug-rm: error: '$1' is not in the shrug repository"
+        exit 1
+    fi
+}
+
+# compare curr + index + repo 
+check_commit(){
+    commit_path=".shrug/$lastcommit"
+    if test -e "$commit_path/$1"
+    then 
+        if test $marker = "--cached"
+        then
+           # echo 'marker found 1 '
+            cache_diff "$1" "$index_path/$1" "$commit_path/$1"
+        else
+            check_diff "$1" "$index_path/$1" "$commit_path/$1"
+        fi
+    else
+        if test $marker = "--cached"
+        then
+            continue
+        else
+            echo "shrug-rm: error: '$1' has changes staged in the index"
+            exit 1 
+        fi
+    fi
+}
+
+check_diff(){
+    diff $1 $2 > /dev/null
+    comp1=$?
+
+    if  test $# -eq 3 
+    then
+        diff $2 $3 > /dev/null
+        comp2=$?
+        if test $comp1 -eq 1 &&  test $comp2 -eq 1
+        then
+            echo "shrug-rm: error: '$1' in index is different to both working file and repository"
+            exit 1
+        elif test $comp2 -eq 1
+        then
+            echo "shrug-rm: error: '$1' has changes staged in the index"
+            exit
+        fi
+    fi
+
+    if test $comp1 -eq 1 #only compare working dir +  index ; dont need to if --cache
+    then
+        echo "shrug-rm: error: '$1' in repository is different to working file"
+        exit 1
+    fi
+}
+
+cache_diff(){
+    diff $1 $2 > /dev/null
+    comp1=$?
+    if test $# -eq 3
+    then
+        diff $2 $3 > /dev/null
+        comp2=$?
+        if test $comp1 -eq 1 &&  test $comp2 -eq 1
+        then
+            echo "shrug-rm: error: '$1' in index is different to both working file and repository"
+            exit 1
+        fi
+    fi
+
+}
+
+# disregard current directory 
+check_backup(){
+    if test -d ".shrug/$lastcommit"
+    then 
+        latest_commit
+        for x in $@
+        do
+            working_dir_onlyfile $x
+            if test $marker = "--cached"
+            then
+                check_commit $x 
+            elif test $marker = "--force"
+            then
+                continue
+            else
+                check_commit $x 
+                check_index $x 
+            fi
+
+        done
+    else
+        echo "shrug-rm: error: There are no existing commits"
+        exit 1 
+    fi
+    return 1 
+}
+# --force: remove from index + working directory 
+if test $1 = "--force"
+then
+    marker="--force"
+    #echo "in force "
+    shift
+    if test $1 = "--cached" # either forced or cached- never reached: optional 
+    then
+        shift
+        rm_index $@ 
+    else
+        check_backup $@
+        rm_currdir $@
+        rm_index $@ 
+    fi
+
+# --cached : removed only from index, not current directory 
+elif test $1 = "--cached"
+then 
+    #echo "in cached"
+    marker="--cached"
+    shift
+    check_backup $@
+    rm_index $@
+else #just filenames :remove from working directory 
+    #echo "else "
+    check_backup $@ 
+    backup_ret=$?
+    if test $((backup_ret)) -eq 1
+    then
+        rm_currdir $@
+        rm_index $@ 
+    else
+        echo "failed rm cos theres no backup "
+        exit 1 
+    fi
+fi

@@ -1,0 +1,17 @@
+Date        |Start      |Stop       |Activity       |Comments
+------------+-----------+-----------+---------------+-----------------------
+8/08/20      3:00pm      4:00pm      coding          implemented subset 0
+             4:00pm      6:13pm      coding          implemented subset 1
+             6:13pm      6:20pm      testing         passed subset 1 tests 
+             7:45pm      11:00pm     coding          implemented subset 2: if elif
+             11:00pm     12:30am     debugging       debugging subset 2    
+9/08/20      2:00am      2:20am      refactoring     making code more readable       
+             1:45pm      2:30pm      refactoring     added helper functions    
+             2:30pm      4:00pm      testing         gather and tested demo00
+             4:00pm      4:40pm      coding          adding more "if test" conditions 
+             4:00pm      7:30pm      debugging       vigorous testing on subset 0-2 
+             8:00pm      9:00pm      debugging       gathered and tested demo00 -demo04
+             9:00pm      9:50pm      coding          implementing subset 3
+
+Notes:
+- hard to make extensive demos/test since subset 3 and 4 are partly implemented

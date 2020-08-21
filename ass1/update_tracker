@@ -1,0 +1,8 @@
+#!/bin/dash
+for i in *
+do
+    if test ! -e .status/$i 
+    then
+        touch .status/$i 
+    fi 
+done 

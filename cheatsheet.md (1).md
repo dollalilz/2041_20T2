@@ -21,6 +21,9 @@ Usage: wc [option][file]
 	-w		number of words	(non-white space)
 	-c		number of characters
 	-l		number of lines
+	
+Output
+[how many lines]	[words non-whitespace character]	[number of bytes]
 ```
 
 ### `tr` : transliterate characters
@@ -132,6 +135,9 @@ grep Andrew /etc/passwd | cut -d: -f6 | xargs rm -r
 ```
 ### `join`: database operator
 Merges two files using values in a field in each files as a common key. Key field can be in a different position but the files must e ordered on that field. 
+- pretty standard stdin and file
+- reading from stdin, put a dash in front of it e.g.
+`egrep 'COMP' enrollments|sort|join -program_codes`
 Default key field: 1 
 ```bash
 -1 k 	key field in first file is k 

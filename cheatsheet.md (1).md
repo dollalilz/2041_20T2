@@ -111,6 +111,7 @@ sort -t: -k5 /etc/passwd
 ```
 
 ### `uniq`: remove or count duplicates
+How it works: sees 2 lines to determine if they are the same, doesnt print the 2nd one. Sort first --> uniq --> sort 
 ```bash
 -c 		also print number of times each line is duplicated 
 -d 		only print (one copy of) duplicated lines 

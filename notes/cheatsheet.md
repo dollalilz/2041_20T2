@@ -464,6 +464,8 @@ split (//,'hello')
 
 eval $line #executes line if contains perl
 
+(glob("*.c *.h"))
+
 IFS=$'\n' #fixes issues with whitespace filenames 
 
 ```
@@ -510,3 +512,4 @@ Capital version = inverse of the lowercase counterparts e.g. \D = non-digits => 
 #new anchors to regex: 
 \b: matches at word boundary
 ```
+

@@ -1,0 +1,621 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>test_solns</title>
+  <link rel="stylesheet" href="https://stackedit.io/style.css" />
+</head>
+
+<body class="stackedit">
+  <div class="stackedit__html"><h2 id="test-solutions">Test Solutions</h2>
+<h3 id="week-3">Week 3</h3>
+<p>first_name.sh</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/sh</span>
+
+<span class="token function">egrep</span> <span class="token string">'COMP[29]041'</span> <span class="token string">"<span class="token variable">$1</span>"</span><span class="token operator">|</span>
+<span class="token function">cut</span> -d\<span class="token operator">|</span> -f3<span class="token operator">|</span>
+<span class="token function">cut</span> -d, -f2<span class="token operator">|</span>
+<span class="token function">cut</span> -d\  -f2<span class="token operator">|</span>
+<span class="token function">sort</span><span class="token operator">|</span>
+<span class="token function">uniq</span> -c<span class="token operator">|</span>
+<span class="token function">sort</span> -nr<span class="token operator">|</span>
+<span class="token function">head</span> -1<span class="token operator">|</span>
+<span class="token function">sed</span> <span class="token string">'s/.* //'</span>
+</code></pre>
+<p><a href="http://htm2html.sh">htm2html.sh</a></p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/sh</span>
+
+<span class="token keyword">for</span> <span class="token function">file</span> <span class="token keyword">in</span> *.htm
+<span class="token keyword">do</span>
+    new_file_name<span class="token operator">=</span><span class="token string">"<span class="token variable">$file</span>"</span>l
+    <span class="token keyword">if</span> <span class="token function">test</span> -e <span class="token string">"<span class="token variable">$new_file_name</span>"</span>
+    <span class="token keyword">then</span>
+        <span class="token keyword">echo</span> <span class="token string">"<span class="token variable">$new_file_name</span> exists"</span>
+        <span class="token keyword">exit</span> 1
+    <span class="token keyword">else</span>
+        <span class="token function">mv</span> <span class="token string">"<span class="token variable">$file</span>"</span> <span class="token string">"<span class="token variable">$new_file_name</span>"</span>
+    <span class="token keyword">fi</span>
+<span class="token keyword">done</span>
+<span class="token keyword">exit</span> 0
+</code></pre>
+<p>missing_include.sh</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/sh</span>
+
+<span class="token keyword">for</span> c_file <span class="token keyword">in</span> <span class="token string">"<span class="token variable">$@</span>"</span>
+<span class="token keyword">do</span>
+    <span class="token keyword">for</span> include_file <span class="token keyword">in</span> `egrep <span class="token string">'^#include *"'</span> <span class="token string">"<span class="token variable">$c_file</span>"</span><span class="token operator">|</span><span class="token function">sed</span> <span class="token string">'s/" *$//;s/.*"//'</span>`
+    <span class="token keyword">do</span>
+        <span class="token keyword">if</span> <span class="token function">test</span> <span class="token operator">!</span> -r <span class="token string">"<span class="token variable">$include_file</span>"</span>
+        <span class="token keyword">then</span>
+            <span class="token keyword">echo</span> <span class="token string">"<span class="token variable">$include_file</span> included into <span class="token variable">$c_file</span> does not exist"</span>
+        <span class="token keyword">fi</span>
+    <span class="token keyword">done</span>
+<span class="token keyword">done</span>
+</code></pre>
+<h3 id="week-4">Week 4</h3>
+<p>create_integers_file.sh</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/bash</span>
+
+start<span class="token operator">=</span><span class="token variable">$1</span>
+finish<span class="token operator">=</span><span class="token variable">$2</span>
+filename<span class="token operator">=</span><span class="token string">"<span class="token variable">$3</span>"</span>
+
+i<span class="token operator">=</span><span class="token variable">$start</span>
+<span class="token keyword">while</span> <span class="token variable"><span class="token punctuation">((</span>i <span class="token operator">&lt;=</span> finish<span class="token punctuation">))</span></span>
+<span class="token keyword">do</span>
+    <span class="token keyword">echo</span> <span class="token variable">$i</span>
+    i<span class="token operator">=</span><span class="token variable"><span class="token variable">$((</span>i <span class="token operator">+</span> <span class="token number">1</span><span class="token variable">))</span></span>
+<span class="token keyword">done</span> <span class="token operator">&gt;</span><span class="token variable">$filename</span>
+</code></pre>
+<p>create_integers_file.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># create a file containing numbers min..max 1 per line</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">die</span> <span class="token string">"Usage: $0 &lt;min&gt; &lt;max&gt; &lt;file&gt;\n"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">!=</span> <span class="token number">3</span><span class="token punctuation">;</span>
+
+<span class="token variable">$min</span> <span class="token operator">=</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token variable">$max</span> <span class="token operator">=</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token variable">$file</span> <span class="token operator">=</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+open F<span class="token punctuation">,</span> <span class="token string">'&gt;'</span><span class="token punctuation">,</span> <span class="token variable">$file</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"$0: ca not open file: $!\n"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">foreach</span> <span class="token variable">$i</span> <span class="token punctuation">(</span><span class="token variable">$min</span><span class="token operator">..</span><span class="token variable">$max</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">print</span> F <span class="token string">"$i\n"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+close F<span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl">ARGV <span class="token operator">==</span> <span class="token number">3</span> <span class="token operator">and</span> open F<span class="token punctuation">,</span> <span class="token string">'&gt;'</span><span class="token punctuation">,</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">2</span><span class="token punctuation">]</span> <span class="token operator">or</span> <span class="token keyword">die</span><span class="token punctuation">;</span>
+<span class="token keyword">print</span> F join<span class="token punctuation">(</span><span class="token string">"\n"</span><span class="token punctuation">,</span> <span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token operator">..</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<p>nth_line.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token operator">!</span><span class="token operator">/</span>usr<span class="token operator">/</span>bin<span class="token operator">/</span>perl <span class="token operator">-w</span>
+
+<span class="token comment"># print nth-line of a file</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">die</span> <span class="token string">"Usage $0: &lt;n&gt; &lt;file&gt;\n"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">!=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+
+open F<span class="token punctuation">,</span> <span class="token string">"&lt;"</span><span class="token punctuation">,</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"$0: can not open $ARGV[1]: $!\n"</span><span class="token punctuation">;</span>
+<span class="token variable">$line_number</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;F&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$line_number</span> <span class="token operator">==</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">print</span> <span class="token variable">$line</span><span class="token punctuation">;</span>
+        <span class="token keyword">last</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token variable">$line_number</span><span class="token operator">++</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment"># more concise but less readable solution</span>
+
+<span class="token variable">$target_line_number</span> <span class="token operator">=</span> shift <span class="token variable">@ARGV</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"Usage $0: &lt;n&gt; &lt;file&gt;\n"</span><span class="token punctuation">;</span>
+<span class="token variable">$.</span> <span class="token operator">==</span> <span class="token variable">$target_line_number</span> <span class="token operator">and</span> <span class="token keyword">print</span> <span class="token keyword">while</span> <span class="token filehandle symbol">&lt;&gt;</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="week-5">Week 5</h3>
+<p>sort_words.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># sort words on each line of STDIN</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">my</span> <span class="token variable">@words</span> <span class="token operator">=</span> split <span class="token regex">/\s+/</span><span class="token punctuation">,</span> <span class="token variable">$line</span><span class="token punctuation">;</span>
+    <span class="token keyword">my</span> <span class="token variable">@sorted_words</span> <span class="token operator">=</span> sort <span class="token variable">@words</span><span class="token punctuation">;</span>
+    <span class="token keyword">print</span> join<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">,</span> <span class="token variable">@sorted_words</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token keyword">print</span> join<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">,</span> sort split<span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"\n"</span> <span class="token keyword">while</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">;</span>
+</code></pre>
+<p>replace_digits.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># replaced digits in specified files with #s</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">foreach</span> <span class="token variable">$file</span> <span class="token punctuation">(</span><span class="token variable">@ARGV</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    open <span class="token keyword">my</span> <span class="token variable">$f</span><span class="token punctuation">,</span> <span class="token string">'&lt;'</span><span class="token punctuation">,</span> <span class="token variable">$file</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"Can not open $file: $!"</span><span class="token punctuation">;</span>
+    <span class="token variable">@lines</span> <span class="token operator">=</span> <span class="token operator">&lt;</span><span class="token variable">$f</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
+    close <span class="token variable">$f</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">foreach</span> <span class="token variable">$line</span> <span class="token punctuation">(</span><span class="token variable">@lines</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">s/\d/#/g</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+
+    open <span class="token keyword">my</span> <span class="token variable">$g</span><span class="token punctuation">,</span> <span class="token string">'&gt;'</span><span class="token punctuation">,</span> <span class="token variable">$file</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"Can not open $file: $!"</span><span class="token punctuation">;</span>
+    <span class="token keyword">print</span> <span class="token variable">$g</span> <span class="token variable">@lines</span><span class="token punctuation">;</span>
+    close <span class="token variable">$g</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -pi</span>
+<span class="token regex">s/\d/#/g</span>
+</code></pre>
+<p>identical_files.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># test if files all contain identical contents</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">die</span> <span class="token string">"Usage: $0 &lt;files&gt;\n"</span> <span class="token keyword">if</span> <span class="token operator">!</span><span class="token variable">@ARGV</span><span class="token punctuation">;</span>
+
+<span class="token function"><span class="token keyword">sub</span> read_file</span> <span class="token punctuation">{</span>
+    <span class="token keyword">my</span> <span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token variable">@_</span><span class="token punctuation">;</span>
+    open <span class="token keyword">my</span> <span class="token variable">$f</span><span class="token punctuation">,</span> <span class="token string">'&lt;'</span><span class="token punctuation">,</span> <span class="token variable">$file</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"$0: can not open file $file: $!\n"</span><span class="token punctuation">;</span>
+    <span class="token keyword">my</span> <span class="token variable">@lines</span> <span class="token operator">=</span> <span class="token operator">&lt;</span><span class="token variable">$f</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
+    close <span class="token variable">$f</span><span class="token punctuation">;</span>
+    return join <span class="token string">""</span><span class="token punctuation">,</span> <span class="token variable">@lines</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token variable">$first_file_contents</span> <span class="token operator">=</span> read_file<span class="token punctuation">(</span><span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+
+<span class="token keyword">for</span> <span class="token variable">$file</span> <span class="token punctuation">(</span><span class="token variable">@ARGV</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token operator">..</span><span class="token variable">$#ARGV</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>read_file<span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span> <span class="token operator">ne</span> <span class="token variable">$first_file_contents</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">print</span> <span class="token string">"$file is not identical\n"</span><span class="token punctuation">;</span>
+        exit <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token string">"All files are identical\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># test if files all contain identical contents</span>
+<span class="token comment"># concise less-readable version  (note Perl close file when open next file)</span>
+
+<span class="token keyword">foreach</span> <span class="token variable">$file</span> <span class="token punctuation">(</span><span class="token variable">@ARGV</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    open F<span class="token punctuation">,</span> <span class="token string">'&lt;'</span><span class="token punctuation">,</span> <span class="token variable">$file</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"$0: can not open file $file: $!\n"</span><span class="token punctuation">;</span>
+    <span class="token variable">$contents</span> <span class="token operator">=</span> join <span class="token string">""</span><span class="token punctuation">,</span> <span class="token filehandle symbol">&lt;F&gt;</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span>defined <span class="token variable">$first_file_contents</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token variable">$first_file_contents</span> <span class="token operator">=</span> <span class="token variable">$contents</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">elsif</span> <span class="token punctuation">(</span><span class="token variable">$first_file_contents</span> <span class="token operator">ne</span> <span class="token variable">$contents</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">print</span> <span class="token string">"$file is not identical\n"</span><span class="token punctuation">;</span>
+        exit <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token string">"All files are identical\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="week-6">Week 6</h3>
+<p>uniq_echo.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print command line arguments unless they are a repeat</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">foreach</span> <span class="token variable">$argument</span> <span class="token punctuation">(</span><span class="token variable">@ARGV</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">next</span> <span class="token keyword">if</span> <span class="token variable">$arguments_seen</span><span class="token punctuation">{</span><span class="token variable">$argument</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">print</span> <span class="token string">" "</span> <span class="token keyword">if</span> <span class="token variable">%arguments_seen</span><span class="token punctuation">;</span>
+    <span class="token keyword">print</span> <span class="token variable">$argument</span><span class="token punctuation">;</span>
+    <span class="token variable">$arguments_seen</span><span class="token punctuation">{</span><span class="token variable">$argument</span><span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">print</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print command line arguments unless they are a repeat</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+<span class="token comment"># more concise less readable version</span>
+
+<span class="token keyword">my</span> <span class="token variable">%seen</span><span class="token punctuation">;</span> <span class="token comment"># avoid warning</span>
+<span class="token keyword">print</span> join<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">,</span> grep<span class="token punctuation">(</span><span class="token operator">!</span><span class="token variable">$seen</span><span class="token punctuation">{</span><span class="token variable">$_</span><span class="token punctuation">}</span><span class="token operator">++</span><span class="token punctuation">,</span> <span class="token variable">@ARGV</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"\n"</span>
+</code></pre>
+<p>snap_n.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># Stop after a line oN STDIN is seen n times, n is supplied as a command line argument</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">die</span> <span class="token string">"Usage: $0 &lt;n&gt;"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+
+<span class="token keyword">my</span> <span class="token variable">$snap_after_n_repeats</span> <span class="token operator">=</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">my</span> <span class="token variable">%line_repeats</span><span class="token punctuation">;</span>
+
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token variable">$line_repeats</span><span class="token punctuation">{</span><span class="token variable">$line</span><span class="token punctuation">}</span><span class="token operator">++</span><span class="token punctuation">;</span>
+
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$line_repeats</span><span class="token punctuation">{</span><span class="token variable">$line</span><span class="token punctuation">}</span> <span class="token operator">&gt;=</span> <span class="token variable">$snap_after_n_repeats</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">print</span> <span class="token string">"Snap: $line"</span><span class="token punctuation">;</span>
+        <span class="token keyword">last</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<p>sort_file_lines.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print the lines of a files sorted on length, shortest to longest</span>
+<span class="token comment"># if lines are of equal length they sorted alphabetically</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token function"><span class="token keyword">sub</span> compare</span> <span class="token punctuation">{</span>
+    <span class="token keyword">my</span> <span class="token variable">$a_length</span> <span class="token operator">=</span> length <span class="token variable">$a</span><span class="token punctuation">;</span>
+    <span class="token keyword">my</span> <span class="token variable">$b_length</span> <span class="token operator">=</span> length <span class="token variable">$b</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$a_length</span> <span class="token operator">==</span> <span class="token variable">$b_length</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        return <span class="token variable">$a</span> <span class="token operator">cmp</span> <span class="token variable">$b</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+        return <span class="token variable">$a_length</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$b_length</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">die</span> <span class="token string">"Usage $0: &lt;file&gt;\n"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+open <span class="token keyword">my</span> <span class="token variable">$f</span><span class="token punctuation">,</span> <span class="token string">"&lt;"</span><span class="token punctuation">,</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"$0: can not open $ARGV[0]: $!\n"</span><span class="token punctuation">;</span>
+<span class="token variable">@lines</span> <span class="token operator">=</span> <span class="token operator">&lt;</span><span class="token variable">$f</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
+close <span class="token variable">$f</span><span class="token punctuation">;</span>
+
+<span class="token variable">@sorted_lines</span> <span class="token operator">=</span> sort compare <span class="token variable">@lines</span><span class="token punctuation">;</span>
+
+<span class="token keyword">print</span> <span class="token variable">@sorted_lines</span><span class="token punctuation">;</span>
+
+exit <span class="token number">0</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print the lines of a files sorted on length, shortest to longest</span>
+<span class="token comment"># if lines are of equal length they sorted alphabetically</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+<span class="token comment"># more concise but less readable solution</span>
+
+<span class="token keyword">print</span> sort <span class="token punctuation">{</span>length <span class="token variable">$a</span> <span class="token operator">&lt;=&gt;</span> length <span class="token variable">$b</span> <span class="token operator">||</span> <span class="token variable">$a</span> <span class="token operator">cmp</span> <span class="token variable">$b</span><span class="token punctuation">}</span> <span class="token filehandle symbol">&lt;&gt;</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="week-7">Week 7</h3>
+<p>three_vowel_echo.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print command line arguments which contain 3 consecutive vowels</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">my</span> <span class="token variable">$n_printed</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">foreach</span> <span class="token variable">$argument</span> <span class="token punctuation">(</span><span class="token variable">@ARGV</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$argument</span> <span class="token operator">=~</span> <span class="token regex">/[aeiou][aeiou][aeiou]/i</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">print</span> <span class="token string">" "</span> <span class="token keyword">if</span> <span class="token variable">$n_printed</span><span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token keyword">print</span> <span class="token variable">$argument</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print command line arguments which contain 3 consecutive vowels</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+<span class="token comment"># more conise less readable version</span>
+
+<span class="token keyword">print</span> join<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">,</span> grep<span class="token punctuation">(</span><span class="token regex">/[aeiou][aeiou][aeiou]/i</span><span class="token punctuation">,</span> <span class="token variable">@ARGV</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"\n"</span>
+</code></pre>
+<p>middle_lines.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print middle lines of a file</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+open F<span class="token punctuation">,</span> <span class="token string">'&lt;'</span><span class="token punctuation">,</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">or</span> <span class="token keyword">die</span><span class="token punctuation">;</span>
+<span class="token keyword">my</span> <span class="token variable">@lines</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;F&gt;</span><span class="token punctuation">;</span>
+close F<span class="token punctuation">;</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token operator">!</span><span class="token variable">@lines</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment"># no lines</span>
+<span class="token punctuation">}</span> <span class="token keyword">elsif</span> <span class="token punctuation">(</span><span class="token variable">@lines</span> <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">==</span> <span class="token number">1</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token comment"># odd number of lines</span>
+    <span class="token keyword">print</span> <span class="token variable">$lines</span><span class="token punctuation">[</span><span class="token variable">$#lines</span><span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span> <span class="token keyword">else</span> <span class="token punctuation">{</span>
+    <span class="token comment"># even number of lines</span>
+    <span class="token keyword">print</span> <span class="token variable">$lines</span><span class="token punctuation">[</span><span class="token variable">$#lines</span><span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">print</span> <span class="token variable">$lines</span><span class="token punctuation">[</span><span class="token variable">$#lines</span><span class="token operator">/</span><span class="token number">2</span> <span class="token operator">+</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print middle lines of a file</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+<span class="token comment"># more conise less readable version</span>
+
+<span class="token keyword">my</span> <span class="token variable">@lines</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;&gt;</span><span class="token punctuation">;</span>
+<span class="token keyword">print</span> <span class="token variable">@lines</span><span class="token punctuation">[</span><span class="token punctuation">(</span><span class="token variable">@lines</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">/</span><span class="token number">2</span><span class="token operator">..</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token variable">@lines</span><span class="token operator">-</span><span class="token number">1</span><span class="token punctuation">)</span><span class="token operator">/</span><span class="token number">2</span> <span class="token operator">+</span> <span class="token number">1</span> <span class="token operator">-</span> <span class="token punctuation">(</span><span class="token variable">@lines</span><span class="token variable">%2</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">]</span> <span class="token keyword">if</span> <span class="token variable">@lines</span><span class="token punctuation">;</span>
+</code></pre>
+<p>largest_numbered_line.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print line of a file containing largest number</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">my</span> <span class="token variable">@line_numbers</span> <span class="token operator">=</span> <span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">/\-?(?:\d+\.?\d*|\.\d+)/g</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">@line_numbers</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">my</span> <span class="token variable">$largest_line_number</span> <span class="token operator">=</span> <span class="token punctuation">(</span>sort <span class="token punctuation">{</span><span class="token variable">$b</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token variable">@line_numbers</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        push <span class="token variable">@numbers</span><span class="token punctuation">,</span> <span class="token variable">$largest_line_number</span><span class="token punctuation">;</span>
+        push <span class="token variable">@lines</span><span class="token punctuation">,</span> <span class="token variable">$line</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">@numbers</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">my</span> <span class="token variable">$largest_number</span> <span class="token operator">=</span> <span class="token punctuation">(</span>sort <span class="token punctuation">{</span><span class="token variable">$b</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token variable">@numbers</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token keyword">foreach</span> <span class="token variable">$i</span> <span class="token punctuation">(</span><span class="token number">0</span><span class="token operator">..</span><span class="token variable">$#numbers</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$numbers</span><span class="token punctuation">[</span><span class="token variable">$i</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token variable">$largest_number</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">print</span> <span class="token variable">$lines</span><span class="token punctuation">[</span><span class="token variable">$i</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print line of a file containing largest number</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+<span class="token comment"># more concise less readable version</span>
+
+push <span class="token variable">@numbers</span><span class="token punctuation">,</span> <span class="token operator">/</span><span class="token operator">\</span><span class="token operator">-</span><span class="token operator">?</span><span class="token punctuation">(</span><span class="token operator">?</span><span class="token punctuation">:</span><span class="token operator">\</span>d<span class="token operator">+</span><span class="token operator">\</span><span class="token operator">.</span><span class="token operator">?</span><span class="token operator">\</span>d<span class="token operator">*</span><span class="token operator">|</span><span class="token operator">\</span><span class="token operator">.</span><span class="token operator">\</span>d<span class="token operator">+</span><span class="token punctuation">)</span><span class="token operator">/</span>g <span class="token keyword">foreach</span> <span class="token variable">@lines</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">;</span>
+exit <span class="token keyword">if</span> <span class="token operator">!</span><span class="token variable">@numbers</span><span class="token punctuation">;</span>
+<span class="token variable">$largest</span> <span class="token operator">=</span> <span class="token punctuation">(</span>sort <span class="token punctuation">{</span><span class="token variable">$b</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token variable">@numbers</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token punctuation">(</span>sort <span class="token punctuation">{</span><span class="token variable">$b</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token regex">/\-?(?:\d+\.?\d*|\.\d+)/g</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span> <span class="token operator">==</span> <span class="token variable">$largest</span> <span class="token operator">&amp;&amp;</span> <span class="token keyword">print</span> <span class="token keyword">foreach</span> <span class="token variable">@lines</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="week-8">Week 8</h3>
+<p>median_number.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print the median value of positive numbers supplied as arguments</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">die</span> <span class="token string">"$0: number of numbers supplied as arguments must be odd\n"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">%</span> <span class="token number">2</span> <span class="token operator">!=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+
+<span class="token keyword">my</span> <span class="token variable">@sorted_numbers</span> <span class="token operator">=</span> sort <span class="token punctuation">{</span><span class="token variable">$b</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token variable">@ARGV</span><span class="token punctuation">;</span>
+<span class="token keyword">my</span> <span class="token variable">$median_index</span> <span class="token operator">=</span> <span class="token variable">@sorted_numbers</span> <span class="token operator">/</span> <span class="token number">2</span><span class="token punctuation">;</span>
+<span class="token keyword">my</span> <span class="token variable">$median_number</span> <span class="token operator">=</span> <span class="token variable">$sorted_numbers</span><span class="token punctuation">[</span><span class="token variable">$median_index</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token keyword">print</span> <span class="token string">"$median_number\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># print the median value of positive numbers supplied as arguments</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+<span class="token comment"># one line version</span>
+
+<span class="token keyword">print</span><span class="token punctuation">(</span><span class="token punctuation">(</span><span class="token punctuation">(</span>sort <span class="token punctuation">{</span><span class="token variable">$b</span> <span class="token operator">&lt;=&gt;</span> <span class="token variable">$a</span><span class="token punctuation">}</span> <span class="token variable">@ARGV</span><span class="token punctuation">)</span><span class="token punctuation">[</span><span class="token variable">@ARGV</span><span class="token operator">/</span><span class="token number">2</span><span class="token punctuation">]</span><span class="token punctuation">)</span><span class="token punctuation">,</span><span class="token string">"\n"</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+</code></pre>
+<p>ls_identical.sh</p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/bash</span>
+
+<span class="token comment"># list identical files in the two directories given as arguments</span>
+<span class="token comment"># files starting with . are ignored</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token keyword">if</span> <span class="token function">test</span> <span class="token string">"<span class="token variable">$#</span>"</span> <span class="token operator">!=</span> 2
+<span class="token keyword">then</span>
+    <span class="token keyword">echo</span> <span class="token string">"Usage: <span class="token variable">$0</span> &lt;directory1&gt; &lt;directory2&gt;"</span> 1<span class="token operator">&gt;</span><span class="token operator">&amp;</span>2
+    <span class="token keyword">exit</span> 1
+<span class="token keyword">fi</span>
+
+directory1<span class="token operator">=</span><span class="token string">"<span class="token variable">$1</span>"</span>
+directory2<span class="token operator">=</span><span class="token string">"<span class="token variable">$2</span>"</span>
+
+<span class="token keyword">for</span> <span class="token function">file</span> <span class="token keyword">in</span> <span class="token string">"<span class="token variable">$directory1</span>"</span>/*
+<span class="token keyword">do</span>
+    <span class="token comment"># compare file to coressponding file in directory2</span>
+    <span class="token comment"># any error message e.g. if file not present in directory2</span>
+    <span class="token comment"># is directed to /dev/null</span>
+
+    <span class="token keyword">if</span> <span class="token function">diff</span> <span class="token string">"<span class="token variable">$file</span>"</span> <span class="token string">"<span class="token variable">$directory2</span>"</span> <span class="token operator">&gt;</span>/dev/null 2<span class="token operator">&gt;</span><span class="token operator">&amp;</span>1
+    <span class="token keyword">then</span>
+        <span class="token function">basename</span> <span class="token string">"<span class="token variable">$file</span>"</span>
+    <span class="token keyword">fi</span>
+<span class="token keyword">done</span>
+</code></pre>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token comment"># list identical files in the two directories given as arguments</span>
+<span class="token comment"># files starting with . are ignored</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+<span class="token comment"># terse less readable version</span>
+
+<span class="token comment">#test "$#" != 2 &amp;&amp;  echo "Usage: $0 &lt;directory1&gt; &lt;directory2&gt;" 1&gt;&amp;2 &amp;&amp; exit 1</span>
+<span class="token keyword">for</span> <span class="token function">file</span> <span class="token keyword">in</span> <span class="token string">"<span class="token variable">$1</span>"</span>/*
+<span class="token keyword">do</span>
+    <span class="token function">diff</span> <span class="token string">"<span class="token variable">$file</span>"</span> <span class="token string">"<span class="token variable">$2</span>"</span> <span class="token operator">&gt;</span>/dev/null 2<span class="token operator">&gt;</span><span class="token operator">&amp;</span>1 <span class="token operator">&amp;&amp;</span> <span class="token function">basename</span> <span class="token string">"<span class="token variable">$file</span>"</span>
+<span class="token keyword">done</span>
+</code></pre>
+<p>ls_identical.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># list identical files in the two directories given as arguments</span>
+<span class="token comment"># files starting with . are ignored</span>
+<span class="token comment"># written by andrewt@unsw.edu.au as COMP[29]041 sample solution</span>
+
+<span class="token function"><span class="token keyword">sub</span> main</span><span class="token punctuation">(</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">die</span> <span class="token string">"Usage: $0 &lt;directory1&gt; &lt;directory2&gt;\n"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">!=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+    <span class="token keyword">for</span> <span class="token variable">$file1</span> <span class="token punctuation">(</span>sort glob <span class="token string">"$ARGV[0]/*"</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">my</span> <span class="token variable">$basename</span> <span class="token operator">=</span> <span class="token variable">$file1</span><span class="token punctuation">;</span>
+        <span class="token variable">$basename</span> <span class="token operator">=~</span> <span class="token regex">s/.*\///</span><span class="token punctuation">;</span>
+        <span class="token keyword">my</span> <span class="token variable">$file2</span> <span class="token operator">=</span> <span class="token string">"$ARGV[1]/$basename"</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span>identical_files<span class="token punctuation">(</span><span class="token variable">$file1</span><span class="token punctuation">,</span> <span class="token variable">$file2</span><span class="token punctuation">)</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token keyword">print</span> <span class="token string">"$basename\n"</span> <span class="token keyword">if</span> <span class="token operator">-r</span> <span class="token variable">$file2</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token function"><span class="token keyword">sub</span> identical_files</span> <span class="token punctuation">{</span>
+    <span class="token keyword">my</span> <span class="token punctuation">(</span><span class="token variable">$file1</span><span class="token punctuation">,</span> <span class="token variable">$file2</span><span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token variable">@_</span><span class="token punctuation">;</span>
+    return <span class="token number">0</span> <span class="token keyword">if</span> <span class="token operator">!</span><span class="token operator">-r</span> <span class="token variable">$file1</span> <span class="token operator">or</span> <span class="token operator">!</span><span class="token operator">-r</span> <span class="token variable">$file2</span><span class="token punctuation">;</span>
+    return read_file<span class="token punctuation">(</span><span class="token variable">$file1</span><span class="token punctuation">)</span> <span class="token operator">eq</span> read_file<span class="token punctuation">(</span><span class="token variable">$file2</span><span class="token punctuation">)</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+<span class="token function"><span class="token keyword">sub</span> read_file</span> <span class="token punctuation">{</span>
+    <span class="token keyword">my</span> <span class="token punctuation">(</span><span class="token variable">$file</span><span class="token punctuation">)</span> <span class="token operator">=</span> <span class="token variable">@_</span><span class="token punctuation">;</span>
+    open <span class="token keyword">my</span> <span class="token variable">$f</span><span class="token punctuation">,</span> <span class="token string">'&lt;'</span><span class="token punctuation">,</span> <span class="token variable">$file</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"$0: can not open file $file: $!\n"</span><span class="token punctuation">;</span>
+    <span class="token keyword">my</span> <span class="token variable">@lines</span> <span class="token operator">=</span> <span class="token operator">&lt;</span><span class="token variable">$f</span><span class="token operator">&gt;</span><span class="token punctuation">;</span>
+    close <span class="token variable">$f</span><span class="token punctuation">;</span>
+    return join <span class="token string">""</span><span class="token punctuation">,</span> <span class="token variable">@lines</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+
+main<span class="token punctuation">(</span><span class="token punctuation">)</span>
+</code></pre>
+<h3 id="week-9">Week 9</h3>
+<p>distinct_lines.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token variable">$n_distinct_lines_needed</span> <span class="token operator">=</span> shift <span class="token variable">@ARGV</span> <span class="token operator">or</span> <span class="token keyword">die</span><span class="token punctuation">;</span>
+
+<span class="token variable">$n_lines</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token variable">$n_lines</span><span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token variable">$line</span> <span class="token operator">=</span> lc <span class="token variable">$line</span><span class="token punctuation">;</span>
+    <span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">s/\s//g</span><span class="token punctuation">;</span>
+    <span class="token variable">$lines_seen</span><span class="token punctuation">{</span><span class="token variable">$line</span><span class="token punctuation">}</span><span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>keys <span class="token variable">%lines_seen</span> <span class="token operator">&gt;=</span> <span class="token variable">$n_distinct_lines_needed</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">print</span> <span class="token string">"$n_distinct_lines_needed distinct lines seen after $n_lines lines read.\n"</span><span class="token punctuation">;</span>
+        exit <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token string">"End of input reached after $n_lines lines read - $n_distinct_lines_needed different lines not seen.\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token regex">s/\s//g</span><span class="token punctuation">;</span>
+    <span class="token variable">$lines_seen</span><span class="token punctuation">{</span>lc <span class="token variable">$_</span><span class="token punctuation">}</span><span class="token operator">++</span><span class="token punctuation">;</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span>keys <span class="token variable">%lines_seen</span> <span class="token operator">&gt;=</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">print</span> <span class="token string">"$ARGV[0] distinct lines seen after $. lines read.\n"</span><span class="token punctuation">;</span>
+        exit <span class="token number">0</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+<span class="token keyword">print</span> <span class="token string">"End of input reached after $. lines read - $ARGV[0] different lines not seen.\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<p><a href="http://eating.sh">eating.sh</a></p>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/sh</span>
+
+<span class="token comment"># Tally supermarket bills in a file</span>
+<span class="token comment"># andrewt@unsw.edu.au for a COMP[29]041 exercise</span>
+<span class="token comment"># Lines in file have this format</span>
+<span class="token comment"># {"name": "Peanut Butter", "price": "$6.93"},</span>
+
+<span class="token function">egrep</span> <span class="token string">'"name"'</span> <span class="token string">"<span class="token variable">$1</span>"</span><span class="token operator">|</span>
+<span class="token function">cut</span> -d\" -f4<span class="token operator">|</span>
+<span class="token function">sort</span><span class="token operator">|</span>
+<span class="token function">uniq</span>
+</code></pre>
+<pre class=" language-bash"><code class="prism  language-bash"><span class="token shebang important">#!/bin/sh</span>
+
+<span class="token comment"># Tally supermarket bills in a file</span>
+<span class="token comment"># andrewt@unsw.edu.au for a COMP[29]041 exercise</span>
+<span class="token comment"># Lines in file have this format</span>
+<span class="token comment"># {"name": "Peanut Butter", "price": "$6.93"},</span>
+
+<span class="token function">egrep</span> <span class="token string">'"name"'</span> <span class="token string">"<span class="token variable">$1</span>"</span><span class="token operator">|</span>
+<span class="token function">sed</span> <span class="token string">'
+ s/.*"name": "//
+ s/".*//
+ '</span><span class="token operator">|</span>
+<span class="token function">sort</span><span class="token operator">|</span>
+<span class="token function">uniq</span>
+</code></pre>
+<p>json_count.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment"># Count  observations of a whale species in a file</span>
+<span class="token comment"># andrewt@unsw.edu.au for a COMP[29]041 exercise</span>
+
+<span class="token keyword">die</span> <span class="token string">"Usage: $0 &lt;whale species&gt; &lt;file&gt;\n"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">!=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+
+<span class="token variable">$target_species</span> <span class="token operator">=</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">0</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+<span class="token variable">$filename</span> <span class="token operator">=</span> <span class="token variable">$ARGV</span><span class="token punctuation">[</span><span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+
+<span class="token keyword">my</span> <span class="token variable">$n_whales</span> <span class="token operator">=</span> <span class="token number">0</span><span class="token punctuation">;</span>
+
+open <span class="token keyword">my</span> <span class="token variable">$f</span><span class="token punctuation">,</span> <span class="token variable">$filename</span> <span class="token operator">or</span> <span class="token keyword">die</span> <span class="token string">"Can not open $filename\n"</span><span class="token punctuation">;</span>
+
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token operator">&lt;</span><span class="token variable">$f</span><span class="token operator">&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">/"how_many": (\d+)/i</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token variable">$how_many</span> <span class="token operator">=</span> <span class="token variable">$1</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span> <span class="token keyword">elsif</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">/"species": "(.*)"/i</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">my</span> <span class="token variable">$species</span> <span class="token operator">=</span> <span class="token variable">$1</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$species</span> <span class="token operator">eq</span> <span class="token variable">$target_species</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token variable">$n_whales</span> <span class="token operator">+=</span> <span class="token variable">$how_many</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+
+close <span class="token variable">$f</span><span class="token punctuation">;</span>
+
+<span class="token keyword">print</span> <span class="token string">"$n_whales\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token comment">#Count  observations of a whale species in  1 or more files</span>
+<span class="token comment"># andrewt@unsw.edu.au for a COMP[29]041 exercise</span>
+<span class="token comment"># terse less readable version</span>
+
+<span class="token keyword">die</span> <span class="token string">"Usage: $0 &lt;whale species&gt; &lt;files&gt;\n"</span> <span class="token keyword">if</span> <span class="token variable">@ARGV</span> <span class="token operator">!=</span> <span class="token number">2</span><span class="token punctuation">;</span>
+
+<span class="token variable">$target_species</span> <span class="token operator">=</span> shift <span class="token variable">@ARGV</span><span class="token punctuation">;</span>
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token filehandle symbol">&lt;&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token variable">$how_many</span> <span class="token operator">=</span> <span class="token variable">$1</span> <span class="token keyword">if</span> <span class="token regex">/"how_many": (\d+)/i</span><span class="token punctuation">;</span>
+    <span class="token variable">$n_whales</span> <span class="token operator">+=</span> <span class="token variable">$how_many</span> <span class="token keyword">if</span> <span class="token regex">/"species": "$target_species"/i</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token string">"$n_whales\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<h3 id="week-10">Week 10</h3>
+<p>remove_repeats.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token keyword">foreach</span> <span class="token variable">$arg</span> <span class="token punctuation">(</span><span class="token variable">@ARGV</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">next</span> <span class="token keyword">if</span> <span class="token variable">$seen</span><span class="token punctuation">{</span><span class="token variable">$arg</span><span class="token punctuation">}</span><span class="token punctuation">;</span>
+    <span class="token keyword">print</span> <span class="token string">"$arg "</span><span class="token punctuation">;</span>
+    <span class="token variable">$seen</span><span class="token punctuation">{</span><span class="token variable">$arg</span><span class="token punctuation">}</span> <span class="token operator">=</span> <span class="token number">1</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl</span>
+<span class="token keyword">my</span> <span class="token variable">%seen</span><span class="token punctuation">;</span>
+<span class="token keyword">print</span> join<span class="token punctuation">(</span><span class="token string">" "</span><span class="token punctuation">,</span>grep<span class="token punctuation">(</span><span class="token operator">!</span><span class="token variable">$seen</span><span class="token punctuation">{</span><span class="token variable">$_</span><span class="token punctuation">}</span><span class="token operator">++</span><span class="token punctuation">,</span> <span class="token variable">@ARGV</span><span class="token punctuation">)</span><span class="token punctuation">)</span><span class="token punctuation">,</span> <span class="token string">"\n"</span><span class="token punctuation">;</span>
+</code></pre>
+<p>text_round.pl</p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+
+<span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;&gt;</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">while</span> <span class="token punctuation">(</span><span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">/(\d+\.\d+)/</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token keyword">my</span> <span class="token variable">$number</span> <span class="token operator">=</span> <span class="token variable">$1</span><span class="token punctuation">;</span>
+        <span class="token variable">$number</span> <span class="token operator">=~</span> <span class="token regex">/^(\d+)/</span><span class="token punctuation">;</span>
+        <span class="token keyword">my</span> <span class="token variable">$rounded_number</span> <span class="token operator">=</span> <span class="token variable">$1</span><span class="token punctuation">;</span>
+        <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$number</span> <span class="token operator">=~</span> <span class="token regex">/\.[5-9]/</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+            <span class="token variable">$rounded_number</span><span class="token operator">++</span><span class="token punctuation">;</span>
+        <span class="token punctuation">}</span>
+        <span class="token variable">$line</span> <span class="token operator">=~</span> <span class="token regex">s/$number/$rounded_number/</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+    <span class="token keyword">print</span> <span class="token variable">$line</span><span class="token punctuation">;</span>
+<span class="token punctuation">}</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -wp</span>
+<span class="token regex">s/(\d+\.\d+)/int($&amp;+0.5)/eg</span><span class="token punctuation">;</span>
+</code></pre>
+<p><a href="http://reference.pl">reference.pl</a></p>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+<span class="token variable">@a</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">;</span>
+<span class="token keyword">foreach</span> <span class="token variable">$i</span> <span class="token punctuation">(</span><span class="token number">0</span><span class="token operator">..</span><span class="token variable">$#a</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+    <span class="token keyword">if</span> <span class="token punctuation">(</span><span class="token variable">$a</span><span class="token punctuation">[</span><span class="token variable">$i</span><span class="token punctuation">]</span> <span class="token operator">=~</span> <span class="token regex">/^#(\d+)/</span><span class="token punctuation">)</span> <span class="token punctuation">{</span>
+        <span class="token variable">$a</span><span class="token punctuation">[</span><span class="token variable">$i</span><span class="token punctuation">]</span> <span class="token operator">=</span> <span class="token variable">$a</span><span class="token punctuation">[</span><span class="token variable">$1</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span><span class="token punctuation">;</span>
+    <span class="token punctuation">}</span>
+<span class="token punctuation">}</span>
+<span class="token keyword">print</span> <span class="token variable">@a</span><span class="token punctuation">;</span>
+</code></pre>
+<pre class=" language-perl"><code class="prism  language-perl"><span class="token comment">#!/usr/bin/perl -w</span>
+<span class="token variable">@a</span> <span class="token operator">=</span> <span class="token filehandle symbol">&lt;STDIN&gt;</span><span class="token punctuation">;</span>
+<span class="token regex">/^#(\d+)/</span> <span class="token operator">and</span> <span class="token variable">$_</span> <span class="token operator">=</span> <span class="token variable">$a</span><span class="token punctuation">[</span><span class="token variable">$1</span> <span class="token operator">-</span> <span class="token number">1</span><span class="token punctuation">]</span> <span class="token keyword">foreach</span> <span class="token variable">@a</span><span class="token punctuation">;</span>
+<span class="token keyword">print</span> <span class="token variable">@a</span><span class="token punctuation">;</span>
+</code></pre>
+</div>
+</body>
+
+</html>

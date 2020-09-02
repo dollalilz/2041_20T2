@@ -8,7 +8,7 @@ COMP2041 20T3
 - style 15/15
   - Code is very readable with sensible variable names and good separation of sections.
   - The addition of functions was a nice touch. A good amount of comments in the code.
-- test-suite 4.5
+- test-suite 4.5/5
   - Overall tests were well written, and test a wide range of cases. Each command
   - has a good amount of testing.                                               
   - 0.5 would've liked some comments explaining what you're trying to test    
@@ -16,5 +16,7 @@ COMP2041 20T3
   
 ##### ass2_sheepl
 - automark 63/80
-- style 
-- test
+- style 14/15
+- test 5/5
+
+77 DN 

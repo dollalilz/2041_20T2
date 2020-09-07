@@ -16,7 +16,21 @@ COMP2041 20T3
   
 ##### ass2_sheepl
 - automark 63/80
-- style 14/15
+- style 14.5/15
+  + =============================================== +
+ + Generally good commenting of major blocks and   +
+ + your logic. Great decomposition into functions  +
+ + and sensible var names. A redundant             +
+ + commented-out line of code here and there       +
+ + that's good to get rid of for readability.      +
+ + Whitespace/indents could be a tad more          +
+ + consistent in parts but overall reasonably neat +
+ + =============================================== +
 - test 5/5
+ + ============================================== +
+ + Tests cover some good cases and appear to have +
+ + been thoughtfully put together, well done!     +
+ + ============================================== +
+
 
 77 DN 
